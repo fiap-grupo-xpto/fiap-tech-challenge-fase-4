@@ -1,0 +1,113 @@
+{
+  "history": {
+    "accuracy": [
+      0.9009126424789429,
+      0.9661017060279846,
+      0.9322034120559692
+    ],
+    "auc": [
+      0.9672721028327942,
+      0.9950782656669617,
+      0.9751769304275513
+    ],
+    "loss": [
+      0.24239479005336761,
+      0.09400633722543716,
+      0.2059604823589325
+    ],
+    "precision": [
+      0.931693971157074,
+      0.9597989916801453,
+      0.9358974099159241
+    ],
+    "recall": [
+      0.8698979616165161,
+      0.9744898080825806,
+      0.9311224222183228
+    ],
+    "val_accuracy": [
+      0.8787878751754761,
+      0.903030276298523,
+      0.9090909361839294
+    ],
+    "val_auc": [
+      0.9920588135719299,
+      0.9920588135719299,
+      0.991911768913269
+    ],
+    "val_loss": [
+      0.29407843947410583,
+      0.24912573397159576,
+      0.2766837179660797
+    ],
+    "val_precision": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "val_recall": [
+      0.7647058963775635,
+      0.8117647171020508,
+      0.8235294222831726
+    ],
+    "learning_rate": [
+      0.00045399999362416565,
+      0.00045399999362416565,
+      4.540000009001233e-05
+    ]
+  },
+  "validation_metrics": {
+    "accuracy": 0.9515151515151515,
+    "precision": 0.9873417721518988,
+    "recall": 0.9176470588235294,
+    "specificity": 0.9875,
+    "f1": 0.9512195121951219,
+    "tp": 78,
+    "tn": 79,
+    "fp": 1,
+    "fn": 7,
+    "threshold": 0.1
+  },
+  "test_metrics": {
+    "accuracy": 0.9575757575757575,
+    "precision": 0.9873417721518988,
+    "recall": 0.9285714285714286,
+    "specificity": 0.9876543209876543,
+    "f1": 0.9570552147239264,
+    "tp": 78,
+    "tn": 80,
+    "fp": 1,
+    "fn": 6,
+    "threshold": 0.1,
+    "auc_roc": 0.9955908289241623,
+    "average_precision": 0.9956765397758509
+  },
+  "fitness": 0.9561376743380834,
+  "train_images": 767,
+  "val_images": 165,
+  "test_images": 165,
+  "image_size": 224,
+  "class_names": {
+    "0": "nao_maligno",
+    "1": "maligno"
+  },
+  "positive_class": "maligno",
+  "negative_class": "nao_maligno",
+  "dataset_dir": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\datasets\\extracted\\The IQ-OTHNCCD lung cancer dataset",
+  "best_threshold": 0.1,
+  "class_weight": {
+    "0": 1.0226666666666666,
+    "1": 0.9783163265306123
+  },
+  "backbone": "EfficientNetB0",
+  "selected_params": {
+    "learning_rate": 0.000454,
+    "batch_size": 8,
+    "frozen_epochs": 2,
+    "fine_tune_epochs": 1,
+    "dense_units": 256,
+    "dropout_rate": 0.4996,
+    "use_class_weight": true,
+    "unfreeze_layers": 40
+  }
+}

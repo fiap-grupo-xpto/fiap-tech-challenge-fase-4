@@ -1,0 +1,378 @@
+{
+  "dataset_dir": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\datasets\\extracted\\The IQ-OTHNCCD lung cancer dataset",
+  "experiments": [
+    {
+      "name": "exp1",
+      "pop_size": 2,
+      "generations": 1,
+      "cx_prob": 0.8,
+      "mut_prob": 0.15,
+      "seed": 11
+    },
+    {
+      "name": "exp2",
+      "pop_size": 2,
+      "generations": 1,
+      "cx_prob": 0.8,
+      "mut_prob": 0.3,
+      "seed": 22
+    },
+    {
+      "name": "exp3",
+      "pop_size": 3,
+      "generations": 2,
+      "cx_prob": 0.8,
+      "mut_prob": 0.2,
+      "seed": 33
+    }
+  ],
+  "fitness_weights": {
+    "recall": 0.45,
+    "specificity": 0.2,
+    "f1": 0.2,
+    "auc_roc": 0.15
+  },
+  "param_space": {
+    "learning_rate": {
+      "type": "log_float",
+      "low": 5e-05,
+      "high": 0.0005
+    },
+    "batch_size": {
+      "type": "cat",
+      "choices": [
+        8,
+        16
+      ]
+    },
+    "frozen_epochs": {
+      "type": "int",
+      "low": 2,
+      "high": 4
+    },
+    "fine_tune_epochs": {
+      "type": "int",
+      "low": 1,
+      "high": 2
+    },
+    "dense_units": {
+      "type": "cat",
+      "choices": [
+        64,
+        128,
+        256
+      ]
+    },
+    "dropout_rate": {
+      "type": "float",
+      "low": 0.2,
+      "high": 0.5
+    },
+    "use_class_weight": {
+      "type": "cat",
+      "choices": [
+        true,
+        false
+      ]
+    },
+    "unfreeze_layers": {
+      "type": "cat",
+      "choices": [
+        10,
+        20,
+        40
+      ]
+    }
+  },
+  "results_by_experiment": {
+    "exp1": {
+      "best_params": {
+        "learning_rate": 0.000142,
+        "batch_size": 16,
+        "frozen_epochs": 3,
+        "fine_tune_epochs": 1,
+        "dense_units": 64,
+        "dropout_rate": 0.4412,
+        "use_class_weight": false,
+        "unfreeze_layers": 40
+      },
+      "best_fitness": 0.9781247099229556,
+      "validation_metrics": {
+        "accuracy": 0.9818181818181818,
+        "precision": 0.9767441860465116,
+        "recall": 0.9882352941176471,
+        "specificity": 0.975,
+        "f1": 0.9824561403508771,
+        "tp": 84,
+        "tn": 78,
+        "fp": 2,
+        "fn": 1,
+        "threshold": 0.1
+      },
+      "test_metrics": {
+        "accuracy": 0.9696969696969697,
+        "precision": 0.9540229885057471,
+        "recall": 0.9880952380952381,
+        "specificity": 0.9506172839506173,
+        "f1": 0.9707602339181286,
+        "tp": 83,
+        "tn": 77,
+        "fp": 4,
+        "fn": 1,
+        "threshold": 0.1,
+        "auc_roc": 0.9947089947089948,
+        "average_precision": 0.9947171390699842
+      },
+      "best_threshold": 0.1,
+      "history": [
+        0.9781247099229556
+      ],
+      "artifacts": {
+        "checkpoint_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\ga_image_runs\\exp1\\gen_1_cand_1\\best.keras",
+        "info_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\ga_image_runs\\exp1\\gen_1_cand_1\\best_info.json",
+        "metrics_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\ga_image_runs\\exp1\\gen_1_cand_1\\metrics.json"
+      },
+      "config": {
+        "pop_size": 2,
+        "generations": 1,
+        "cx_prob": 0.8,
+        "mut_prob": 0.15,
+        "seed": 11
+      }
+    },
+    "exp2": {
+      "best_params": {
+        "learning_rate": 6.6e-05,
+        "batch_size": 16,
+        "frozen_epochs": 2,
+        "fine_tune_epochs": 1,
+        "dense_units": 128,
+        "dropout_rate": 0.4878,
+        "use_class_weight": false,
+        "unfreeze_layers": 40
+      },
+      "best_fitness": 0.9629726631393298,
+      "validation_metrics": {
+        "accuracy": 0.9818181818181818,
+        "precision": 0.9767441860465116,
+        "recall": 0.9882352941176471,
+        "specificity": 0.975,
+        "f1": 0.9824561403508771,
+        "tp": 84,
+        "tn": 78,
+        "fp": 2,
+        "fn": 1,
+        "threshold": 0.19
+      },
+      "test_metrics": {
+        "accuracy": 0.9454545454545454,
+        "precision": 0.9120879120879121,
+        "recall": 0.9880952380952381,
+        "specificity": 0.9012345679012346,
+        "f1": 0.9485714285714287,
+        "tp": 83,
+        "tn": 73,
+        "fp": 8,
+        "fn": 1,
+        "threshold": 0.19,
+        "auc_roc": 0.9891240446796002,
+        "average_precision": 0.9886225187420269
+      },
+      "best_threshold": 0.19,
+      "history": [
+        0.9629726631393298
+      ],
+      "artifacts": {
+        "checkpoint_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\ga_image_runs\\exp2\\gen_1_cand_2\\best.keras",
+        "info_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\ga_image_runs\\exp2\\gen_1_cand_2\\best_info.json",
+        "metrics_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\ga_image_runs\\exp2\\gen_1_cand_2\\metrics.json"
+      },
+      "config": {
+        "pop_size": 2,
+        "generations": 1,
+        "cx_prob": 0.8,
+        "mut_prob": 0.3,
+        "seed": 22
+      }
+    },
+    "exp3": {
+      "best_params": {
+        "learning_rate": 0.000186,
+        "batch_size": 8,
+        "frozen_epochs": 3,
+        "fine_tune_epochs": 2,
+        "dense_units": 256,
+        "dropout_rate": 0.3444,
+        "use_class_weight": true,
+        "unfreeze_layers": 40
+      },
+      "best_fitness": 0.9695566778900113,
+      "validation_metrics": {
+        "accuracy": 0.9696969696969697,
+        "precision": 0.9878048780487805,
+        "recall": 0.9529411764705882,
+        "specificity": 0.9875,
+        "f1": 0.9700598802395209,
+        "tp": 81,
+        "tn": 79,
+        "fp": 1,
+        "fn": 4,
+        "threshold": 0.1
+      },
+      "test_metrics": {
+        "accuracy": 0.9696969696969697,
+        "precision": 0.9876543209876543,
+        "recall": 0.9523809523809523,
+        "specificity": 0.9876543209876543,
+        "f1": 0.9696969696969696,
+        "tp": 80,
+        "tn": 80,
+        "fp": 1,
+        "fn": 4,
+        "threshold": 0.1,
+        "auc_roc": 0.996766607877719,
+        "average_precision": 0.9968362364933117
+      },
+      "best_threshold": 0.1,
+      "history": [
+        0.968694885361552,
+        0.9695566778900113
+      ],
+      "artifacts": {
+        "checkpoint_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\ga_image_runs\\exp3\\gen_2_cand_6\\best.keras",
+        "info_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\ga_image_runs\\exp3\\gen_2_cand_6\\best_info.json",
+        "metrics_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\ga_image_runs\\exp3\\gen_2_cand_6\\metrics.json"
+      },
+      "config": {
+        "pop_size": 3,
+        "generations": 2,
+        "cx_prob": 0.8,
+        "mut_prob": 0.2,
+        "seed": 33
+      }
+    }
+  },
+  "ranking": [
+    {
+      "experiment_name": "exp1",
+      "best_fitness": 0.9781247099229556,
+      "best_params": {
+        "learning_rate": 0.000142,
+        "batch_size": 16,
+        "frozen_epochs": 3,
+        "fine_tune_epochs": 1,
+        "dense_units": 64,
+        "dropout_rate": 0.4412,
+        "use_class_weight": false,
+        "unfreeze_layers": 40
+      },
+      "test_metrics": {
+        "accuracy": 0.9696969696969697,
+        "precision": 0.9540229885057471,
+        "recall": 0.9880952380952381,
+        "specificity": 0.9506172839506173,
+        "f1": 0.9707602339181286,
+        "tp": 83,
+        "tn": 77,
+        "fp": 4,
+        "fn": 1,
+        "threshold": 0.1,
+        "auc_roc": 0.9947089947089948,
+        "average_precision": 0.9947171390699842
+      },
+      "best_threshold": 0.1
+    },
+    {
+      "experiment_name": "exp3",
+      "best_fitness": 0.9695566778900113,
+      "best_params": {
+        "learning_rate": 0.000186,
+        "batch_size": 8,
+        "frozen_epochs": 3,
+        "fine_tune_epochs": 2,
+        "dense_units": 256,
+        "dropout_rate": 0.3444,
+        "use_class_weight": true,
+        "unfreeze_layers": 40
+      },
+      "test_metrics": {
+        "accuracy": 0.9696969696969697,
+        "precision": 0.9876543209876543,
+        "recall": 0.9523809523809523,
+        "specificity": 0.9876543209876543,
+        "f1": 0.9696969696969696,
+        "tp": 80,
+        "tn": 80,
+        "fp": 1,
+        "fn": 4,
+        "threshold": 0.1,
+        "auc_roc": 0.996766607877719,
+        "average_precision": 0.9968362364933117
+      },
+      "best_threshold": 0.1
+    },
+    {
+      "experiment_name": "exp2",
+      "best_fitness": 0.9629726631393298,
+      "best_params": {
+        "learning_rate": 6.6e-05,
+        "batch_size": 16,
+        "frozen_epochs": 2,
+        "fine_tune_epochs": 1,
+        "dense_units": 128,
+        "dropout_rate": 0.4878,
+        "use_class_weight": false,
+        "unfreeze_layers": 40
+      },
+      "test_metrics": {
+        "accuracy": 0.9454545454545454,
+        "precision": 0.9120879120879121,
+        "recall": 0.9880952380952381,
+        "specificity": 0.9012345679012346,
+        "f1": 0.9485714285714287,
+        "tp": 83,
+        "tn": 73,
+        "fp": 8,
+        "fn": 1,
+        "threshold": 0.19,
+        "auc_roc": 0.9891240446796002,
+        "average_precision": 0.9886225187420269
+      },
+      "best_threshold": 0.19
+    }
+  ],
+  "best_overall": {
+    "experiment_name": "exp1",
+    "best_fitness": 0.9781247099229556,
+    "best_params": {
+      "learning_rate": 0.000142,
+      "batch_size": 16,
+      "frozen_epochs": 3,
+      "fine_tune_epochs": 1,
+      "dense_units": 64,
+      "dropout_rate": 0.4412,
+      "use_class_weight": false,
+      "unfreeze_layers": 40
+    },
+    "test_metrics": {
+      "accuracy": 0.9696969696969697,
+      "precision": 0.9540229885057471,
+      "recall": 0.9880952380952381,
+      "specificity": 0.9506172839506173,
+      "f1": 0.9707602339181286,
+      "tp": 83,
+      "tn": 77,
+      "fp": 4,
+      "fn": 1,
+      "threshold": 0.1,
+      "auc_roc": 0.9947089947089948,
+      "average_precision": 0.9947171390699842
+    },
+    "best_threshold": 0.1,
+    "export": {
+      "model_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\backend\\model\\best.keras",
+      "info_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\backend\\model\\best_info.json",
+      "metrics_path": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\backend\\model\\metrics.json"
+    }
+  }
+}

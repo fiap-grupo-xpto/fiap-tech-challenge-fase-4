@@ -1,0 +1,23 @@
+{
+  "image_size": 224,
+  "class_names": {
+    "0": "nao_maligno",
+    "1": "maligno"
+  },
+  "positive_class": "maligno",
+  "negative_class": "nao_maligno",
+  "dataset_dir": "C:\\Users\\arfdd\\coding\\fiap-tech-challenge-fase-1\\train_model\\datasets\\extracted\\The IQ-OTHNCCD lung cancer dataset",
+  "best_threshold": 0.1,
+  "class_weight": null,
+  "backbone": "EfficientNetB0",
+  "selected_params": {
+    "learning_rate": 0.000142,
+    "batch_size": 16,
+    "frozen_epochs": 3,
+    "fine_tune_epochs": 1,
+    "dense_units": 64,
+    "dropout_rate": 0.4412,
+    "use_class_weight": false,
+    "unfreeze_layers": 40
+  }
+}

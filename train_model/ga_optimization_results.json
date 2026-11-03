@@ -1,0 +1,456 @@
+{
+  "dataset_path": "/Users/otoniel.isidoro/Documents/FIAP/TechChallenge/Tech_Challenge/train_model/datasets/dataset.csv",
+  "experiments": [
+    {
+      "name": "exp1",
+      "pop_size": 8,
+      "generations": 3,
+      "cx_prob": 0.8,
+      "mut_prob": 0.1,
+      "seed": 1
+    },
+    {
+      "name": "exp2",
+      "pop_size": 8,
+      "generations": 3,
+      "cx_prob": 0.8,
+      "mut_prob": 0.3,
+      "seed": 2
+    },
+    {
+      "name": "exp3",
+      "pop_size": 12,
+      "generations": 3,
+      "cx_prob": 0.8,
+      "mut_prob": 0.1,
+      "seed": 3
+    }
+  ],
+  "fitness_weights": {
+    "recall": 0.6,
+    "specificity": 0.2,
+    "f1": 0.2,
+    "fairness_penalty": 0.5
+  },
+  "results_by_model": {
+    "RandomForestClassifier": {
+      "exp1": {
+        "best_params": {
+          "n_estimators": 56,
+          "max_depth": 17,
+          "min_samples_split": 9,
+          "min_samples_leaf": 1,
+          "max_features": 0.8521
+        },
+        "best_fitness": 0.538846579051951,
+        "validation_metrics": {
+          "recall": 0.5493421052631579,
+          "specificity": 0.5168918918918919,
+          "f1": 0.5439739413680782,
+          "fairness_penalty": 0.005863701515875341
+        },
+        "history": [
+          0.5239075264040505,
+          0.5254315331663184,
+          0.538846579051951
+        ],
+        "config": {
+          "pop_size": 8,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.1,
+          "seed": 1
+        }
+      },
+      "exp2": {
+        "best_params": {
+          "n_estimators": 238,
+          "max_depth": 28,
+          "min_samples_split": 6,
+          "min_samples_leaf": 3,
+          "max_features": 0.7242
+        },
+        "best_fitness": 0.5349222046009945,
+        "validation_metrics": {
+          "recall": 0.5493421052631579,
+          "specificity": 0.5304054054054054,
+          "f1": 0.5475409836065573,
+          "fairness_penalty": 0.020544672718585733
+        },
+        "history": [
+          0.5349222046009945,
+          0.5349222046009945,
+          0.5349222046009945
+        ],
+        "config": {
+          "pop_size": 8,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.3,
+          "seed": 2
+        }
+      },
+      "exp3": {
+        "best_params": {
+          "n_estimators": 84,
+          "max_depth": 18,
+          "min_samples_split": 5,
+          "min_samples_leaf": 1,
+          "max_features": 0.709
+        },
+        "best_fitness": 0.5352743679647103,
+        "validation_metrics": {
+          "recall": 0.5592105263157895,
+          "specificity": 0.5135135135135135,
+          "f1": 0.5501618122977346,
+          "fairness_penalty": 0.025974025974025983
+        },
+        "history": [
+          0.5275118669035811,
+          0.5348008807862303,
+          0.5352743679647103
+        ],
+        "config": {
+          "pop_size": 12,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.1,
+          "seed": 3
+        }
+      }
+    },
+    "LogisticRegression": {
+      "exp1": {
+        "best_params": {
+          "C": 0.1885,
+          "penalty": "l1",
+          "solver": "saga",
+          "class_weight": null,
+          "max_iter": 435
+        },
+        "best_fitness": 0.50074775128421,
+        "validation_metrics": {
+          "recall": 0.5756578947368421,
+          "specificity": 0.4155405405405405,
+          "f1": 0.5368098159509203,
+          "fairness_penalty": 0.07023411371237465
+        },
+        "history": [
+          0.47806142248746564,
+          0.47806142248746564,
+          0.50074775128421
+        ],
+        "config": {
+          "pop_size": 8,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.1,
+          "seed": 1
+        }
+      },
+      "exp2": {
+        "best_params": {
+          "C": 0.367,
+          "penalty": "l1",
+          "solver": "saga",
+          "class_weight": "balanced",
+          "max_iter": 940
+        },
+        "best_fitness": 0.46090262275316857,
+        "validation_metrics": {
+          "recall": 0.5263157894736842,
+          "specificity": 0.5067567567567568,
+          "f1": 0.5245901639344263,
+          "fairness_penalty": 0.12231247013855706
+        },
+        "history": [
+          0.46090262275316857,
+          0.46090262275316857,
+          0.46090262275316857
+        ],
+        "config": {
+          "pop_size": 8,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.3,
+          "seed": 2
+        }
+      },
+      "exp3": {
+        "best_params": {
+          "C": 0.1613,
+          "penalty": "l1",
+          "solver": "saga",
+          "class_weight": null,
+          "max_iter": 256
+        },
+        "best_fitness": 0.511896547732836,
+        "validation_metrics": {
+          "recall": 0.5855263157894737,
+          "specificity": 0.4155405405405405,
+          "f1": 0.5435114503816794,
+          "fairness_penalty": 0.062459279850584304
+        },
+        "history": [
+          0.471051556425196,
+          0.48799915064217125,
+          0.511896547732836
+        ],
+        "config": {
+          "pop_size": 12,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.1,
+          "seed": 3
+        }
+      }
+    },
+    "KNeighborsClassifier": {
+      "exp1": {
+        "best_params": {
+          "n_neighbors": 3,
+          "weights": "distance",
+          "p": 2
+        },
+        "best_fitness": 0.5369119078215189,
+        "validation_metrics": {
+          "recall": 0.5361842105263158,
+          "specificity": 0.5709459459459459,
+          "f1": 0.5488215488215489,
+          "fairness_penalty": 0.017504234895539206
+        },
+        "history": [
+          0.5175364830166715,
+          0.5369119078215189,
+          0.5369119078215189
+        ],
+        "config": {
+          "pop_size": 8,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.1,
+          "seed": 1
+        }
+      },
+      "exp2": {
+        "best_params": {
+          "n_neighbors": 9,
+          "weights": "uniform",
+          "p": 2
+        },
+        "best_fitness": 0.5456027761082889,
+        "validation_metrics": {
+          "recall": 0.5460526315789473,
+          "specificity": 0.543918918918919,
+          "f1": 0.5487603305785124,
+          "fairness_penalty": 0.0011293054771316369
+        },
+        "history": [
+          0.5379452908676381,
+          0.5379452908676381,
+          0.5456027761082889
+        ],
+        "config": {
+          "pop_size": 8,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.3,
+          "seed": 2
+        }
+      },
+      "exp3": {
+        "best_params": {
+          "n_neighbors": 9,
+          "weights": "uniform",
+          "p": 2
+        },
+        "best_fitness": 0.5456027761082889,
+        "validation_metrics": {
+          "recall": 0.5460526315789473,
+          "specificity": 0.543918918918919,
+          "f1": 0.5487603305785124,
+          "fairness_penalty": 0.0011293054771316369
+        },
+        "history": [
+          0.5183376171781592,
+          0.5456027761082889,
+          0.5456027761082889
+        ],
+        "config": {
+          "pop_size": 12,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.1,
+          "seed": 3
+        }
+      }
+    },
+    "ExtraTreesClassifier": {
+      "exp1": {
+        "best_params": {
+          "n_estimators": 147,
+          "max_depth": 24,
+          "min_samples_split": 5,
+          "min_samples_leaf": 2,
+          "max_features": 0.8081
+        },
+        "best_fitness": 0.4928593393124286,
+        "validation_metrics": {
+          "recall": 0.47368421052631576,
+          "specificity": 0.5675675675675675,
+          "f1": 0.5,
+          "fairness_penalty": 0.009729401033748863
+        },
+        "history": [
+          0.4869988762170826,
+          0.4869988762170826,
+          0.4928593393124286
+        ],
+        "config": {
+          "pop_size": 8,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.1,
+          "seed": 1
+        }
+      },
+      "exp2": {
+        "best_params": {
+          "n_estimators": 136,
+          "max_depth": 28,
+          "min_samples_split": 6,
+          "min_samples_leaf": 3,
+          "max_features": 0.7242
+        },
+        "best_fitness": 0.4902086761681401,
+        "validation_metrics": {
+          "recall": 0.4868421052631579,
+          "specificity": 0.5405405405405406,
+          "f1": 0.5034013605442177,
+          "fairness_penalty": 0.021369934413412672
+        },
+        "history": [
+          0.4861499187242895,
+          0.4902086761681401,
+          0.4902086761681401
+        ],
+        "config": {
+          "pop_size": 8,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.3,
+          "seed": 2
+        }
+      },
+      "exp3": {
+        "best_params": {
+          "n_estimators": 118,
+          "max_depth": 21,
+          "min_samples_split": 7,
+          "min_samples_leaf": 4,
+          "max_features": 0.709
+        },
+        "best_fitness": 0.4939907693761154,
+        "validation_metrics": {
+          "recall": 0.48026315789473684,
+          "specificity": 0.5506756756756757,
+          "f1": 0.5008576329331046,
+          "fairness_penalty": 0.0089475741649655
+        },
+        "history": [
+          0.48248275814237607,
+          0.4939907693761154,
+          0.4939907693761154
+        ],
+        "config": {
+          "pop_size": 12,
+          "generations": 3,
+          "cx_prob": 0.8,
+          "mut_prob": 0.1,
+          "seed": 3
+        }
+      }
+    }
+  },
+  "ranking": [
+    {
+      "model_name": "KNeighborsClassifier",
+      "best_experiment": "exp2",
+      "best_fitness": 0.5456027761082889,
+      "best_params": {
+        "n_neighbors": 9,
+        "weights": "uniform",
+        "p": 2
+      }
+    },
+    {
+      "model_name": "RandomForestClassifier",
+      "best_experiment": "exp1",
+      "best_fitness": 0.538846579051951,
+      "best_params": {
+        "n_estimators": 56,
+        "max_depth": 17,
+        "min_samples_split": 9,
+        "min_samples_leaf": 1,
+        "max_features": 0.8521
+      }
+    },
+    {
+      "model_name": "LogisticRegression",
+      "best_experiment": "exp3",
+      "best_fitness": 0.511896547732836,
+      "best_params": {
+        "C": 0.1613,
+        "penalty": "l1",
+        "solver": "saga",
+        "class_weight": null,
+        "max_iter": 256
+      }
+    },
+    {
+      "model_name": "ExtraTreesClassifier",
+      "best_experiment": "exp3",
+      "best_fitness": 0.4939907693761154,
+      "best_params": {
+        "n_estimators": 118,
+        "max_depth": 21,
+        "min_samples_split": 7,
+        "min_samples_leaf": 4,
+        "max_features": 0.709
+      }
+    }
+  ],
+  "best_overall": {
+    "model_name": "KNeighborsClassifier",
+    "best_experiment": "exp2",
+    "best_fitness": 0.5456027761082889,
+    "best_params": {
+      "n_neighbors": 9,
+      "weights": "uniform",
+      "p": 2
+    },
+    "export": {
+      "artifact_path": "/Users/otoniel.isidoro/Documents/FIAP/TechChallenge/Tech_Challenge/backend/model/lung_cancer_classifier.joblib",
+      "metadata_path": "/Users/otoniel.isidoro/Documents/FIAP/TechChallenge/Tech_Challenge/backend/model/lung_cancer_classifier.metadata.json",
+      "threshold_summary": {
+        "threshold": 0.1,
+        "precision": 0.5066666666666667,
+        "recall": 1.0,
+        "specificity": 0.0,
+        "f1": 0.672566371681416
+      },
+      "test_metrics": {
+        "accuracy": 0.505,
+        "precision": 0.505,
+        "recall": 1.0,
+        "specificity": 0.0,
+        "f1": 0.6710963455149501,
+        "tp": 303,
+        "tn": 0,
+        "fp": 297,
+        "fn": 0,
+        "threshold": 0.1
+      }
+    }
+  }
+}
