@@ -213,6 +213,14 @@ train_model/datasets/extracted/*
 !train_model/datasets/extracted/.gitkeep
 entregas/fase04/data/raw/rehab24-6/*
 !entregas/fase04/data/raw/rehab24-6/.gitkeep
+entregas/fase04/data/raw/icbhi/*
+!entregas/fase04/data/raw/icbhi/.gitkeep
+entregas/fase04/data/raw/voiced/*
+!entregas/fase04/data/raw/voiced/.gitkeep
+entregas/fase04/data/raw/parkinson/*
+!entregas/fase04/data/raw/parkinson/.gitkeep
+entregas/fase04/data/raw/primock57/*
+!entregas/fase04/data/raw/primock57/.gitkeep
 backend/model/*
 !backend/model/.gitkeep
 backend/uploads/*

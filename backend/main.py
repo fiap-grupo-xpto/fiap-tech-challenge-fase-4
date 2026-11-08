@@ -18,6 +18,7 @@ from backend.assistant.service import run_assistant_query
 from backend.assistant.llm_adapter import AssistantProviderSelector
 import logging
 from backend.rehab_video.service import analyze_repetition, annotate_repetition_video
+from backend.rehab_audio.service import analyze_session_audio
 import os
 
 logger = logging.getLogger(__name__)
@@ -30,10 +31,12 @@ TABULAR_MODEL_PATH = Path(__file__).parent / "model" / "lung_cancer_classifier.j
 IMAGE_MODEL_PATH = Path(__file__).parent / "model" / "best.keras"
 MAX_LLM_INTERPRETATIONS = int(os.getenv("MAX_LLM_INTERPRETATIONS", "5"))
 MAX_REHAB_VIDEO_BYTES = int(os.getenv("MAX_REHAB_VIDEO_BYTES", str(250 * 1024 * 1024)))
+MAX_REHAB_AUDIO_BYTES = int(os.getenv("MAX_REHAB_AUDIO_BYTES", str(25 * 1024 * 1024)))
 IMAGE_MODEL_NAME = "Modelo de visão computacional (CNN - best.keras)"
 
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'.png', '.jpg', '.jpeg', '.bmp', '.tif', '.tiff'}
+ALLOWED_AUDIO_EXTENSIONS = {".wav"}
 
 
 def preprocess_image_for_model(file_path: Path, model) -> np.ndarray:
@@ -397,6 +400,39 @@ def _new_rehab_temp_path(prefix: str = "rehab_") -> Path:
         return Path(handle.name)
 
 
+def _validate_rehab_audio_request(audio: UploadFile) -> None:
+    if Path(audio.filename or "").suffix.lower() not in ALLOWED_AUDIO_EXTENSIONS:
+        raise HTTPException(
+            status_code=415,
+            detail="Only .wav audio files are supported.",
+        )
+
+
+async def _save_rehab_audio_upload(audio: UploadFile, destination: Path) -> None:
+    total_bytes = 0
+    with destination.open("wb") as output:
+        while chunk := await audio.read(1024 * 1024):
+            total_bytes += len(chunk)
+            if total_bytes > MAX_REHAB_AUDIO_BYTES:
+                raise HTTPException(
+                    status_code=413,
+                    detail=(
+                        "Audio exceeds the upload limit of "
+                        f"{MAX_REHAB_AUDIO_BYTES // (1024 * 1024)} MB."
+                    ),
+                )
+            output.write(chunk)
+    if total_bytes == 0:
+        raise HTTPException(status_code=400, detail="Uploaded audio is empty.")
+
+
+def _new_rehab_audio_temp_path(suffix: str) -> Path:
+    with tempfile.NamedTemporaryFile(
+        suffix=suffix or ".wav", prefix="rehab_audio_", dir=UPLOAD_DIR, delete=False
+    ) as handle:
+        return Path(handle.name)
+
+
 @app.post("/analyze-rehabilitation-video")
 async def analyze_rehabilitation_video(
     video: UploadFile = File(...),
@@ -428,6 +464,35 @@ async def analyze_rehabilitation_video(
         raise HTTPException(status_code=503, detail=str(exc)) from exc
     finally:
         await video.close()
+        if temporary_path is not None:
+            temporary_path.unlink(missing_ok=True)
+
+
+@app.post("/analyze-rehabilitation-audio")
+async def analyze_rehabilitation_audio(
+    audio: UploadFile = File(...),
+    language: str = Form(""),
+):
+    _validate_rehab_audio_request(audio)
+    temporary_path: Path | None = None
+    try:
+        temporary_path = _new_rehab_audio_temp_path(Path(audio.filename or "").suffix.lower())
+        await _save_rehab_audio_upload(audio, temporary_path)
+        return await run_in_threadpool(
+            analyze_session_audio,
+            temporary_path,
+            language or None,
+        )
+    except HTTPException:
+        raise
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    finally:
+        await audio.close()
         if temporary_path is not None:
             temporary_path.unlink(missing_ok=True)
 

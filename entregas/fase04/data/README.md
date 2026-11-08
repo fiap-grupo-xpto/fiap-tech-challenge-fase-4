@@ -61,3 +61,30 @@ comparacao com uma referencia de pose nao faz parte do experimento atual.
 for Analyzing Pose Estimation Methods*. 17th International Conference on
 Similarity Search and Applications (SISAP), Springer, 2024. Cite tambem o
 registro Zenodo ao publicar resultados que usem os dados.
+
+## ICBHI 2017 - sons respiratorios
+
+Base usada na avaliacao offline dos indicadores acusticos da analise de audio
+(Tarefa 2). Contem sons pulmonares, nao fala de sessao de fisioterapia, portanto
+serve como avaliacao de proxy e nao valida deteccao de fadiga.
+
+- Dataset: [ICBHI 2017 Respiratory Sound Database](https://bhichallenge.med.auth.gr/ICBHI_2017_Challenge)
+- Citacao: Rocha BM et al. (2019) *An open access database for the evaluation of
+  respiratory sound classification algorithms*. Physiological Measurement 40 035001
+- Uso permitido pelo site do desafio: livre para pesquisa.
+
+| Arquivo | Uso previsto | Tamanho aproximado |
+|---|---|---:|
+| `ICBHI_final_database.zip` | 920 gravacoes `.wav` e as anotacoes `.txt` por ciclo respiratorio | 1,98 GB |
+| `ICBHI_Challenge_diagnosis.txt` | Diagnostico por paciente, usado como rotulo secundario | poucos kB |
+| `ICBHI_challenge_train_test.txt` | Divisao oficial de treino/teste do desafio | poucos kB |
+
+O download fica em `entregas/fase04/data/raw/icbhi/` e e ignorado pelo Git.
+
+```powershell
+py -3.11 entregas\fase04\download_audio_dataset.py
+```
+
+O host do desafio apresenta cadeia de certificado incompleta; por isso o script
+desabilita a verificacao TLS apenas para essas requisicoes e valida o ZIP com
+`testzip` apos o download.

@@ -1,0 +1,47 @@
+{
+  "dataset": {
+    "name": "VOICED x ICBHI cross-dataset transfer",
+    "source": "VOICED (PhysioNet) + ICBHI 2017",
+    "voiced_recordings": 208,
+    "icbhi_recordings": 920,
+    "preprocessing": {
+      "target_sample_rate_hz": 8000,
+      "max_seconds": 30.0
+    }
+  },
+  "voiced_to_icbhi": {
+    "support": 920,
+    "positives": 633,
+    "negatives": 287,
+    "true_positive": 631,
+    "false_positive": 287,
+    "true_negative": 0,
+    "false_negative": 2,
+    "precision": 0.6874,
+    "recall": 0.9968,
+    "sensitivity": 0.9968,
+    "specificity": 0.0,
+    "f1": 0.8137,
+    "accuracy": 0.6859,
+    "roc_auc": 0.4990504813646646,
+    "average_precision": 0.691904903497651
+  },
+  "icbhi_to_voiced": {
+    "support": 208,
+    "positives": 151,
+    "negatives": 57,
+    "true_positive": 146,
+    "false_positive": 57,
+    "true_negative": 0,
+    "false_negative": 5,
+    "precision": 0.7192,
+    "recall": 0.9669,
+    "sensitivity": 0.9669,
+    "specificity": 0.0,
+    "f1": 0.8249,
+    "accuracy": 0.7019,
+    "roc_auc": 0.4441733472754734,
+    "average_precision": 0.7053892115981715
+  },
+  "note": "Both directions transfer a model trained on one domain to a different one (sustained vowel vs respiratory recording). ROC-AUC near 0.5 means the acoustic layer does not generalise across domains, which frames the proxy as weak rather than claiming clinical detection."
+}

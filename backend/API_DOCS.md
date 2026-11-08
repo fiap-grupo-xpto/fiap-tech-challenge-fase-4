@@ -150,3 +150,160 @@ curl -X POST \
   -F "probability_threshold=0.10" \
   http://localhost:8888/analyze-images
 ```
+
+---
+
+## 3. Endpoint: Análise de Áudio de Reabilitação (Fase 4)
+
+Transcreve a fala do paciente durante a sessão de reabilitação (Azure Speech to Text), aplica análise de linguagem (Azure AI Language) e extrai métricas acusticas heurísticas, retornando um relatório experimental de apoio à triagem. As métricas acusticas combinam características temporais/energéticas e espectrais (centroide, rolloff, fluxo espectral e taxa de cruzamento por zero) com marcadores de qualidade vocal calculados via Praat (`jitter_local`, `shimmer_local`, `hnr`), que alimentam o achado de triagem `possivel_disartria` (disartria). O resultado **não é diagnóstico** e exige revisão do fisioterapeuta.
+
+Quando o classificador reutilizável (`backend/model/voice_alteration_classifier.joblib`, treinado por `entregas/fase04/src/evaluate_audio_flags.py --dataset voiced`) está presente, o relatório inclui um bloco `voice_alteration` com a probabilidade estimada de alteração vocal; sem o artefato o campo é `null` e apenas as regras heurísticas são retornadas.
+
+* **Rota:** `/analyze-rehabilitation-audio`
+* **Método:** `POST`
+* **Content-Type:** `multipart/form-data`
+
+### 3.1 Parâmetros de Entrada
+A requisição deve enviar o arquivo de áudio (`.wav`, PCM 16 kHz mono) e, opcionalmente, o idioma. A transcrição usa o endpoint REST de áudio curto, limitado a 60 segundos por arquivo.
+
+| Campo | Tipo | Descrição |
+|---|---|---|
+| `audio` | `file` (áudio) | Arquivo de áudio da sessão no formato `.wav` (PCM 16 kHz mono, máx. 60 s). |
+| `language` | `string` (Form) | Idioma da fala (ex: `pt-BR`). Vazio usa o padrão configurado. |
+
+---
+
+### 3.2 Exemplo de Resposta de Sucesso (`200 OK`)
+Retorna a transcrição, os termos críticos detectados, o sentimento e as métricas acusticas com os achados de triagem:
+
+```json
+{
+  "status": "success",
+  "transcript": "repita o movimento, estou com cansaco",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 0.5,
+      "text": "repita",
+      "confidence": 0.95
+    }
+  ],
+  "critical_terms": [
+    {
+      "term": "cansaco",
+      "category": "sintoma",
+      "count": 1,
+      "severity": "warning"
+    }
+  ],
+  "sentiment": {
+    "label": "negative",
+    "positive": 0.1,
+    "neutral": 0.2,
+    "negative": 0.7
+  },
+  "azure_key_phrases": ["dor", "movimento"],
+  "azure_entities": [
+    {
+      "text": "joelho",
+      "category": "BodyPart"
+    }
+  ],
+  "acoustic_findings": [
+    {
+      "code": "possivel_fadiga",
+      "severity": "warning",
+      "message": "Pausas prolongadas combinadas com baixa energia de voz podem indicar fadiga durante o esforco; sugerida revisao do fisioterapeuta.",
+      "measured": 0.01,
+      "expected": 0.05
+    },
+    {
+      "code": "possivel_disartria",
+      "severity": "warning",
+      "message": "Instabilidade vocal (jitter/shimmer elevados ou relacao harmonico-ruido baixa) pode indicar disartria; resultado experimental de apoio, nao diagnostico.",
+      "measured": 2.14,
+      "expected": 1.04
+    }
+  ],
+  "metrics": {
+    "duration_seconds": 30.0,
+    "rms_energy": 0.01,
+    "voiced_ratio": 0.3,
+    "pause_ratio": 0.7,
+    "mean_pause_seconds": 1.5,
+    "speaking_rate": 0.5,
+    "pitch_variability": 0.1,
+    "spectral_centroid_hz": 612.4,
+    "spectral_rolloff_hz": 1840.0,
+    "spectral_flux": 12.35,
+    "zero_crossing_rate": 0.081,
+    "jitter_local": 2.14,
+    "shimmer_local": 4.52,
+    "hnr": 15.3
+  },
+  "voice_alteration": {
+    "probability_pathological_voice": 0.82,
+    "threshold": 0.5,
+    "flagged": true,
+    "model": "HistGradientBoostingClassifier",
+    "dataset": "VOICED",
+    "validation_roc_auc": 0.6146,
+    "feature_version": "rehab-audio-acoustic-v2"
+  },
+  "risk_flags": ["possivel_fadiga", "sintoma"],
+  "requires_human_review": true,
+  "warning": "Resultado experimental de apoio a reabilitacao; nao e diagnostico e exige revisao do fisioterapeuta.",
+  "method": "Azure Speech to Text + Azure AI Language + regras acusticas heuristicas (nao validadas clinicamente).",
+  "report_version": "1.0"
+}
+```
+
+---
+
+### 3.3 Exemplos de Resposta de Erro
+A rota mapeia falhas de validação e de integração para códigos HTTP específicos:
+
+```json
+{
+  "detail": "Only .wav audio files are supported."
+}
+```
+`415 Unsupported Media Type` — extensão de arquivo não suportada.
+
+```json
+{
+  "detail": "Audio exceeds the upload limit of 25 MB."
+}
+```
+`413 Payload Too Large` — arquivo acima de `MAX_REHAB_AUDIO_BYTES`.
+
+```json
+{
+  "detail": "Uploaded audio is empty."
+}
+```
+`400 Bad Request` — arquivo vazio.
+
+```json
+{
+  "detail": "Audio exceeds the 60 second limit for this analysis."
+}
+```
+`422 Unprocessable Entity` — áudio acima de `MAX_REHAB_AUDIO_SECONDS`.
+
+```json
+{
+  "detail": "Credenciais do Azure nao configuradas para analise de audio."
+}
+```
+`503 Service Unavailable` — credenciais do Azure ausentes ou falha na integração.
+
+---
+
+### 3.4 Comando para teste (curl)
+```bash
+curl -X POST \
+  -F "audio=@sessao_reabilitacao.wav" \
+  -F "language=pt-BR" \
+  http://localhost:8888/analyze-rehabilitation-audio
+```

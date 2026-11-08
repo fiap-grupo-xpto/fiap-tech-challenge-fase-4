@@ -85,11 +85,100 @@ def set_assistant_question(question: str) -> None:
     st.session_state.main_question_input = question
 
 
+def render_audio_analysis(result: dict) -> None:
+    """Renderiza o relatório de análise de áudio de reabilitação."""
+    st.subheader("Transcrição")
+    st.text_area(
+        "Transcrição",
+        value=result["transcript"],
+        height=200,
+        disabled=True,
+        label_visibility="collapsed",
+    )
+
+    st.subheader("Sentimento")
+    sentiment = result["sentiment"]
+    pos_col, neu_col, neg_col = st.columns(3)
+    pos_col.metric("Positivo", f"{sentiment['positive']:.1%}")
+    neu_col.metric("Neutro", f"{sentiment['neutral']:.1%}")
+    neg_col.metric("Negativo", f"{sentiment['negative']:.1%}")
+    st.caption(sentiment["label"])
+
+    st.subheader("Termos críticos")
+    critical_terms = result["critical_terms"]
+    if critical_terms:
+        st.dataframe(
+            pd.DataFrame(
+                critical_terms,
+                columns=["term", "category", "count", "severity"],
+            ),
+            use_container_width=True,
+        )
+    else:
+        st.info("Nenhum termo crítico identificado na transcrição.")
+
+    azure_key_phrases = result.get("azure_key_phrases") or []
+    azure_entities = result.get("azure_entities") or []
+    if azure_key_phrases or azure_entities:
+        st.subheader("Termos e entidades (Azure Text Analytics)")
+        if azure_key_phrases:
+            st.caption("Termos-chave: " + ", ".join(azure_key_phrases))
+        if azure_entities:
+            st.dataframe(
+                pd.DataFrame(azure_entities, columns=["text", "category"]),
+                use_container_width=True,
+            )
+
+    st.subheader("Indicadores vocais")
+    acoustic_findings = result["acoustic_findings"]
+    warning_findings = [
+        item for item in acoustic_findings if item["severity"] == "warning"
+    ]
+    if warning_findings:
+        for item in warning_findings:
+            st.warning(item["message"])
+    else:
+        st.success("Nenhum indicador vocal de alerta identificado.")
+
+    voice_alteration = result.get("voice_alteration")
+    if voice_alteration:
+        st.subheader("Classificador de alteração vocal (experimental)")
+        probability = voice_alteration["probability_pathological_voice"]
+        st.metric("Probabilidade de alteração vocal", f"{probability:.1%}")
+        roc_auc = voice_alteration.get("validation_roc_auc")
+        roc_auc_text = (
+            f"{roc_auc:.3f}" if isinstance(roc_auc, (int, float)) else "n/d"
+        )
+        st.caption(
+            f"Modelo: {voice_alteration['model']} | "
+            f"base: {voice_alteration['dataset']} | "
+            f"ROC-AUC (validação): {roc_auc_text}. "
+            "Proxy de voz sustentada; não substitui a avaliação do fisioterapeuta."
+        )
+
+    risk_flags = result["risk_flags"]
+    if risk_flags:
+        st.caption("Sinalizações: " + ", ".join(risk_flags))
+    else:
+        st.caption("Nenhuma sinalização de risco identificada.")
+
+    st.json(result["metrics"], expanded=False)
+    st.caption(result["method"])
+    st.info(result["warning"])
+    st.download_button(
+        "Baixar relatório da análise (JSON)",
+        data=json.dumps(result, ensure_ascii=False, indent=2).encode("utf-8"),
+        file_name="relatorio_analise_audio.json",
+        mime="application/json",
+    )
+
+
 # Sidebar Navigation
 st.sidebar.title("Navegação do Projeto")
 st.sidebar.caption("FIAP Tech Challenge - Grupo 69")
 
 stage_map = {
+    "🎧 Análise de áudio (Fase 4)": 5,
     "🎥 Análise de movimento (Fase 4)": 4,
     "🩺 Assistente Médico (Fase 3)": 3,
     "📊 Pré-triagem por CSV (Fase 2)": 1,
@@ -746,5 +835,63 @@ elif st.session_state.stage == 4:
                                     f"Não foi possível gerar o vídeo anotado "
                                     f"(HTTP {annotated.status_code}): {detail}"
                                 )
+                except requests.RequestException as exc:
+                    st.error(f"Falha ao conectar com a API: {exc}")
+
+
+# =========================================================================
+# ETAPA 5: ANÁLISE DE ÁUDIO DE SESSÃO DE REABILITAÇÃO (FASE 4)
+# =========================================================================
+elif st.session_state.stage == 5:
+    st.title("Tech Challenge Fase 04 - Análise de Áudio")
+    st.subheader("Transcrição e análise da interação fisioterapeuta/paciente")
+    st.warning(
+        "Resultado experimental de apoio. Não é um diagnóstico e deve ser revisado por um "
+        "fisioterapeuta."
+    )
+    st.write(
+        "Envie o áudio de uma sessão de reabilitação para transcrever a interação entre "
+        "fisioterapeuta e paciente, extrair termos críticos e sentimento e sinalizar "
+        "indicadores vocais de fadiga, desconforto ou dificuldade respiratória. "
+        "Formatos suportados: `.wav` (PCM 16 kHz mono), até 25 MB e 60 segundos."
+    )
+
+    uploaded_audio = st.file_uploader(
+        "Áudio da sessão (WAV, até 25 MB)",
+        type=["wav"],
+        key="rehab_audio_uploader",
+    )
+
+    if st.button(
+        "Analisar áudio",
+        type="primary",
+        disabled=uploaded_audio is None,
+        use_container_width=True,
+    ):
+        if uploaded_audio.size > 25 * 1024 * 1024:
+            st.error("O arquivo excede o limite de 25 MB para análise de áudio.")
+        else:
+            with st.spinner("Transcrevendo e analisando o áudio..."):
+                try:
+                    response = requests.post(
+                        f"{API_URL}/analyze-rehabilitation-audio",
+                        files={
+                            "audio": (
+                                uploaded_audio.name,
+                                uploaded_audio.getvalue(),
+                                "audio/wav",
+                            )
+                        },
+                        data={"language": "pt-BR"},
+                        timeout=300,
+                    )
+                    if response.status_code != 200:
+                        try:
+                            detail = response.json().get("detail", response.text)
+                        except ValueError:
+                            detail = response.text
+                        st.error(f"Falha na análise (HTTP {response.status_code}): {detail}")
+                    else:
+                        render_audio_analysis(response.json())
                 except requests.RequestException as exc:
                     st.error(f"Falha ao conectar com a API: {exc}")

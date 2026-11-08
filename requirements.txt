@@ -30,3 +30,6 @@ peft
 datasets
 accelerate
 torch
+requests
+soundfile
+praat-parselmouth>=0.4

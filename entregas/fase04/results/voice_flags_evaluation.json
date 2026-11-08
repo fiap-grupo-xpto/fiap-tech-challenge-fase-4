@@ -1,0 +1,369 @@
+{
+  "dataset": {
+    "name": "VOICED Database (VOice ICar fEDerico II)",
+    "source": "https://physionet.org/content/voiced/1.0.0/",
+    "citation": "Cesari U, De Pietro G, Marciano E, Niri C, Sannino G, Verde L (2018) A new database of healthy and pathological voices. Computers & Electrical Engineering 68:310-321",
+    "license": "Open Data Commons Attribution License v1.0 (PhysioNet). Cite the publication and the PhysioNet resource when publishing results derived from the data.",
+    "recordings_used": 208,
+    "recordings_pathological": 151,
+    "recordings_healthy": 57,
+    "diagnosis_counts": {
+      "healthy": 57,
+      "hyperkinetic dysphonia": 43,
+      "hyperkinetic dysphonia  (rigid vocal fold)": 1,
+      "hyperkinetic dysphonia (adduction deficit)": 1,
+      "hyperkinetic dysphonia (cordite)": 1,
+      "hyperkinetic dysphonia (nodule)": 5,
+      "hyperkinetic dysphonia (polyps)": 6,
+      "hyperkinetic dysphonia (prolapse)": 9,
+      "hyperkinetic dysphonia (reinke's edema)": 3,
+      "hyperkinetic dysphonia (vocal fold nodules)": 1,
+      "hyperkinetic dysphonia (vocal fold paralysis)": 1,
+      "hyperkinetic dysphonia (vocal fold prolapse)": 1,
+      "hypokinetic dysphonia": 22,
+      "hypokinetic dysphonia (adduction deficit)": 1,
+      "hypokinetic dysphonia (bilateral vocal fold)": 1,
+      "hypokinetic dysphonia (conversion dysphonia)": 1,
+      "hypokinetic dysphonia (dysphonia by chordal groove)": 1,
+      "hypokinetic dysphonia (extraglottic air leak)": 1,
+      "hypokinetic dysphonia (glottic insufficiency)": 7,
+      "hypokinetic dysphonia (laryngitis)": 1,
+      "hypokinetic dysphonia (presbiphonia)": 1,
+      "hypokinetic dysphonia (spasmodic dysphonia)": 1,
+      "hypokinetic dysphonia (vocal fold paralysis)": 4,
+      "reflux laryngitis": 38
+    },
+    "preprocessing": {
+      "target_sample_rate_hz": 8000,
+      "max_seconds": 30.0,
+      "resampling": "box-average anti-alias + decimation (numpy)"
+    }
+  },
+  "proxy_label_primary": {
+    "name": "pathological_voice",
+    "definition": "Recording is positive when the clinically verified diagnosis is anything other than healthy.",
+    "rule_based": {
+      "possivel_fadiga": {
+        "support": 208,
+        "positives": 151,
+        "negatives": 57,
+        "true_positive": 0,
+        "false_positive": 0,
+        "true_negative": 57,
+        "false_negative": 151,
+        "precision": 0.0,
+        "recall": 0.0,
+        "sensitivity": 0.0,
+        "specificity": 1.0,
+        "f1": 0.0,
+        "accuracy": 0.274,
+        "f1_ci95": {
+          "lower": 0.0,
+          "upper": 0.0,
+          "resamples": 1000
+        }
+      },
+      "possivel_desconforto_respiratorio": {
+        "support": 208,
+        "positives": 151,
+        "negatives": 57,
+        "true_positive": 4,
+        "false_positive": 1,
+        "true_negative": 56,
+        "false_negative": 147,
+        "precision": 0.8,
+        "recall": 0.0265,
+        "sensitivity": 0.0265,
+        "specificity": 0.9825,
+        "f1": 0.0513,
+        "accuracy": 0.2885,
+        "f1_ci95": {
+          "lower": 0.0119,
+          "upper": 0.1085,
+          "resamples": 1000
+        }
+      },
+      "fala_instavel": {
+        "support": 208,
+        "positives": 151,
+        "negatives": 57,
+        "true_positive": 6,
+        "false_positive": 0,
+        "true_negative": 57,
+        "false_negative": 145,
+        "precision": 1.0,
+        "recall": 0.0397,
+        "sensitivity": 0.0397,
+        "specificity": 1.0,
+        "f1": 0.0764,
+        "accuracy": 0.3029,
+        "f1_ci95": {
+          "lower": 0.0256,
+          "upper": 0.1384,
+          "resamples": 1000
+        }
+      },
+      "qualquer_alerta": {
+        "support": 208,
+        "positives": 151,
+        "negatives": 57,
+        "true_positive": 9,
+        "false_positive": 1,
+        "true_negative": 56,
+        "false_negative": 142,
+        "precision": 0.9,
+        "recall": 0.0596,
+        "sensitivity": 0.0596,
+        "specificity": 0.9825,
+        "f1": 0.1118,
+        "accuracy": 0.3125,
+        "f1_ci95": {
+          "lower": 0.05,
+          "upper": 0.1797,
+          "resamples": 1000
+        }
+      },
+      "baseline_sempre_normal": {
+        "support": 208,
+        "positives": 151,
+        "negatives": 57,
+        "true_positive": 0,
+        "false_positive": 0,
+        "true_negative": 57,
+        "false_negative": 151,
+        "precision": 0.0,
+        "recall": 0.0,
+        "sensitivity": 0.0,
+        "specificity": 1.0,
+        "f1": 0.0,
+        "accuracy": 0.274
+      },
+      "baseline_sempre_alerta": {
+        "support": 208,
+        "positives": 151,
+        "negatives": 57,
+        "true_positive": 151,
+        "false_positive": 57,
+        "true_negative": 0,
+        "false_negative": 0,
+        "precision": 0.726,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.0,
+        "f1": 0.8412,
+        "accuracy": 0.726
+      }
+    },
+    "learned_baseline": {
+      "status": "ok",
+      "model": "HistGradientBoostingClassifier",
+      "features": [
+        "duration_seconds",
+        "rms_energy",
+        "voiced_ratio",
+        "pause_ratio",
+        "mean_pause_seconds",
+        "speaking_rate",
+        "pitch_variability",
+        "spectral_centroid_hz",
+        "spectral_rolloff_hz",
+        "spectral_flux",
+        "zero_crossing_rate"
+      ],
+      "cross_validation": "StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42) agrupado por sujeito",
+      "support": 208,
+      "positives": 151,
+      "negatives": 57,
+      "true_positive": 127,
+      "false_positive": 43,
+      "true_negative": 14,
+      "false_negative": 24,
+      "precision": 0.7471,
+      "recall": 0.8411,
+      "sensitivity": 0.8411,
+      "specificity": 0.2456,
+      "f1": 0.7913,
+      "accuracy": 0.6779,
+      "roc_auc": 0.6146,
+      "average_precision": 0.8162,
+      "roc_auc_ci95": {
+        "lower": 0.5304,
+        "upper": 0.6979,
+        "resamples": 1000
+      },
+      "average_precision_ci95": {
+        "lower": 0.7441,
+        "upper": 0.8793,
+        "resamples": 1000
+      },
+      "f1_ci95": {
+        "lower": 0.7368,
+        "upper": 0.8393,
+        "resamples": 1000
+      }
+    },
+    "deep_embeddings": {
+      "deep_embeddings_probe": {
+        "model_id": "facebook/wav2vec2-base",
+        "embedding_version": "rehab-audio-wav2vec2-v1",
+        "embedding_dim": 768,
+        "feature": "facebook/wav2vec2-base mean-pooled (768-d)",
+        "status": "ok",
+        "model": "StandardScaler + LogisticRegression",
+        "features": [
+          "facebook/wav2vec2-base mean-pooled (768-d)"
+        ],
+        "cross_validation": "StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42) agrupado por sujeito",
+        "support": 208,
+        "positives": 151,
+        "negatives": 57,
+        "true_positive": 110,
+        "false_positive": 40,
+        "true_negative": 17,
+        "false_negative": 41,
+        "precision": 0.7333,
+        "recall": 0.7285,
+        "sensitivity": 0.7285,
+        "specificity": 0.2982,
+        "f1": 0.7309,
+        "accuracy": 0.6106,
+        "roc_auc": 0.5796,
+        "average_precision": 0.812,
+        "roc_auc_ci95": {
+          "lower": 0.508,
+          "upper": 0.6592,
+          "resamples": 1000
+        },
+        "average_precision_ci95": {
+          "lower": 0.7524,
+          "upper": 0.869,
+          "resamples": 1000
+        },
+        "f1_ci95": {
+          "lower": 0.6738,
+          "upper": 0.7835,
+          "resamples": 1000
+        }
+      },
+      "comparison": {
+        "handcrafted_features": {
+          "model": "HistGradientBoostingClassifier",
+          "roc_auc": 0.6146,
+          "average_precision": 0.8162,
+          "f1": 0.7913,
+          "recall": 0.8411
+        },
+        "deep_embeddings": {
+          "status": "ok",
+          "feature": "facebook/wav2vec2-base mean-pooled (768-d)",
+          "model": "StandardScaler + LogisticRegression",
+          "roc_auc": 0.5796,
+          "average_precision": 0.812,
+          "f1": 0.7309,
+          "recall": 0.7285
+        },
+        "note": "VOICED sustained-vowel voice: the experiment checks whether a self-supervised speech embedding beats the handcrafted acoustic features on the pathological-voice proxy label."
+      }
+    },
+    "dysarthria_calibrated": {
+      "limits": {
+        "jitter_local": 1.2655,
+        "shimmer_local": 9.1533,
+        "hnr": 13.176
+      },
+      "default_limits": {
+        "jitter_local": 1.04,
+        "shimmer_local": 3.81,
+        "hnr": 20.0
+      },
+      "rule_based": {
+        "possivel_disartria": {
+          "support": 208,
+          "positives": 151,
+          "negatives": 57,
+          "true_positive": 30,
+          "false_positive": 2,
+          "true_negative": 55,
+          "false_negative": 121,
+          "precision": 0.9375,
+          "recall": 0.1987,
+          "sensitivity": 0.1987,
+          "specificity": 0.9649,
+          "f1": 0.3279,
+          "accuracy": 0.4087,
+          "f1_ci95": {
+            "lower": 0.2424,
+            "upper": 0.4188,
+            "resamples": 1000
+          }
+        },
+        "qualquer_alerta": {
+          "support": 208,
+          "positives": 151,
+          "negatives": 57,
+          "true_positive": 30,
+          "false_positive": 2,
+          "true_negative": 55,
+          "false_negative": 121,
+          "precision": 0.9375,
+          "recall": 0.1987,
+          "sensitivity": 0.1987,
+          "specificity": 0.9649,
+          "f1": 0.3279,
+          "accuracy": 0.4087,
+          "f1_ci95": {
+            "lower": 0.2424,
+            "upper": 0.4188,
+            "resamples": 1000
+          }
+        },
+        "baseline_sempre_normal": {
+          "support": 208,
+          "positives": 151,
+          "negatives": 57,
+          "true_positive": 0,
+          "false_positive": 0,
+          "true_negative": 57,
+          "false_negative": 151,
+          "precision": 0.0,
+          "recall": 0.0,
+          "sensitivity": 0.0,
+          "specificity": 1.0,
+          "f1": 0.0,
+          "accuracy": 0.274
+        },
+        "baseline_sempre_alerta": {
+          "support": 208,
+          "positives": 151,
+          "negatives": 57,
+          "true_positive": 151,
+          "false_positive": 57,
+          "true_negative": 0,
+          "false_negative": 0,
+          "precision": 0.726,
+          "recall": 1.0,
+          "sensitivity": 1.0,
+          "specificity": 0.0,
+          "f1": 0.8412,
+          "accuracy": 0.726
+        }
+      }
+    }
+  },
+  "artifact": {
+    "path": "backend\\model\\voice_alteration_classifier.joblib",
+    "feature_version": "rehab-audio-acoustic-v2",
+    "validation_roc_auc": 0.6146
+  },
+  "abstentions": {
+    "recordings_without_warning": 198,
+    "note": "No warning code fired for these recordings; they count as negative predictions in the tables above."
+  },
+  "limitations": [
+    "VOICED contains sustained vowel phonation, not physiotherapy session speech; it is a proxy for the vocal-alteration claim.",
+    "A sustained vowel has no pauses or speech onsets, so the pause-based flags (possivel_fadiga, possivel_desconforto_respiratorio) cannot fire and are not exercised here.",
+    "No public dataset labels fatigue or dyspnoea during rehabilitation, so the rehabilitation-specific use case remains unvalidated.",
+    "The learned baseline uses subject-grouped cross-validation; each subject contributes a single recording.",
+    "The deep-embedding probe is a self-supervised model pretrained on spontaneous/read speech and applied to a sustained vowel; it is a comparison of representations, not a clinically validated classifier."
+  ]
+}

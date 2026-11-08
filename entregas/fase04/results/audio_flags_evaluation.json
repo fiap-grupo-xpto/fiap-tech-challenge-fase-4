@@ -1,0 +1,377 @@
+{
+  "dataset": {
+    "name": "ICBHI 2017 Respiratory Sound Database",
+    "source": "https://bhichallenge.med.auth.gr/ICBHI_2017_Challenge",
+    "citation": "Rocha BM et al. (2019) An open access database for the evaluation of respiratory sound classification algorithms. Physiological Measurement 40 035001",
+    "license": "Freely available for research. Cite the publication above and the ICBHI 2017 challenge when publishing results derived from the data.",
+    "recordings_used": 920,
+    "recordings_abnormal": 633,
+    "recordings_normal": 287,
+    "subjects_without_diagnosis": 0,
+    "preprocessing": {
+      "target_sample_rate_hz": 8000,
+      "max_seconds": 30.0,
+      "resampling": "box-average anti-alias + decimation (numpy)"
+    }
+  },
+  "proxy_label_primary": {
+    "name": "crackle_or_wheeze_present",
+    "definition": "Recording is abnormal when at least one annotated respiratory cycle contains crackles or wheezes.",
+    "rule_based": {
+      "possivel_fadiga": {
+        "support": 920,
+        "positives": 633,
+        "negatives": 287,
+        "true_positive": 0,
+        "false_positive": 1,
+        "true_negative": 286,
+        "false_negative": 633,
+        "precision": 0.0,
+        "recall": 0.0,
+        "sensitivity": 0.0,
+        "specificity": 0.9965,
+        "f1": 0.0,
+        "accuracy": 0.3109,
+        "f1_ci95": {
+          "lower": 0.0,
+          "upper": 0.0,
+          "resamples": 1000
+        }
+      },
+      "possivel_desconforto_respiratorio": {
+        "support": 920,
+        "positives": 633,
+        "negatives": 287,
+        "true_positive": 1,
+        "false_positive": 1,
+        "true_negative": 286,
+        "false_negative": 632,
+        "precision": 0.5,
+        "recall": 0.0016,
+        "sensitivity": 0.0016,
+        "specificity": 0.9965,
+        "f1": 0.0031,
+        "accuracy": 0.312,
+        "f1_ci95": {
+          "lower": 0.0,
+          "upper": 0.0099,
+          "resamples": 1000
+        }
+      },
+      "fala_instavel": {
+        "support": 920,
+        "positives": 633,
+        "negatives": 287,
+        "true_positive": 79,
+        "false_positive": 41,
+        "true_negative": 246,
+        "false_negative": 554,
+        "precision": 0.6583,
+        "recall": 0.1248,
+        "sensitivity": 0.1248,
+        "specificity": 0.8571,
+        "f1": 0.2098,
+        "accuracy": 0.3533,
+        "f1_ci95": {
+          "lower": 0.1707,
+          "upper": 0.2467,
+          "resamples": 1000
+        }
+      },
+      "qualquer_alerta": {
+        "support": 920,
+        "positives": 633,
+        "negatives": 287,
+        "true_positive": 80,
+        "false_positive": 42,
+        "true_negative": 245,
+        "false_negative": 553,
+        "precision": 0.6557,
+        "recall": 0.1264,
+        "sensitivity": 0.1264,
+        "specificity": 0.8537,
+        "f1": 0.2119,
+        "accuracy": 0.3533,
+        "f1_ci95": {
+          "lower": 0.172,
+          "upper": 0.2506,
+          "resamples": 1000
+        }
+      },
+      "baseline_sempre_normal": {
+        "support": 920,
+        "positives": 633,
+        "negatives": 287,
+        "true_positive": 0,
+        "false_positive": 0,
+        "true_negative": 287,
+        "false_negative": 633,
+        "precision": 0.0,
+        "recall": 0.0,
+        "sensitivity": 0.0,
+        "specificity": 1.0,
+        "f1": 0.0,
+        "accuracy": 0.312
+      },
+      "baseline_sempre_alerta": {
+        "support": 920,
+        "positives": 633,
+        "negatives": 287,
+        "true_positive": 633,
+        "false_positive": 287,
+        "true_negative": 0,
+        "false_negative": 0,
+        "precision": 0.688,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.0,
+        "f1": 0.8152,
+        "accuracy": 0.688
+      }
+    },
+    "learned_baseline": {
+      "status": "ok",
+      "model": "HistGradientBoostingClassifier",
+      "features": [
+        "duration_seconds",
+        "rms_energy",
+        "voiced_ratio",
+        "pause_ratio",
+        "mean_pause_seconds",
+        "speaking_rate",
+        "pitch_variability",
+        "spectral_centroid_hz",
+        "spectral_rolloff_hz",
+        "spectral_flux",
+        "zero_crossing_rate"
+      ],
+      "cross_validation": "StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42) agrupado por sujeito",
+      "support": 920,
+      "positives": 633,
+      "negatives": 287,
+      "true_positive": 486,
+      "false_positive": 199,
+      "true_negative": 88,
+      "false_negative": 147,
+      "precision": 0.7095,
+      "recall": 0.7678,
+      "sensitivity": 0.7678,
+      "specificity": 0.3066,
+      "f1": 0.7375,
+      "accuracy": 0.6239,
+      "roc_auc": 0.5796,
+      "average_precision": 0.7497,
+      "roc_auc_ci95": {
+        "lower": 0.5409,
+        "upper": 0.6191,
+        "resamples": 1000
+      },
+      "average_precision_ci95": {
+        "lower": 0.711,
+        "upper": 0.7905,
+        "resamples": 1000
+      },
+      "f1_ci95": {
+        "lower": 0.7095,
+        "upper": 0.7652,
+        "resamples": 1000
+      }
+    }
+  },
+  "proxy_label_secondary": {
+    "name": "subject_diagnosis_not_healthy",
+    "definition": "Recording is abnormal when the published subject diagnosis is anything other than Healthy.",
+    "rule_based": {
+      "possivel_fadiga": {
+        "support": 920,
+        "positives": 885,
+        "negatives": 35,
+        "true_positive": 1,
+        "false_positive": 0,
+        "true_negative": 35,
+        "false_negative": 884,
+        "precision": 1.0,
+        "recall": 0.0011,
+        "sensitivity": 0.0011,
+        "specificity": 1.0,
+        "f1": 0.0023,
+        "accuracy": 0.0391,
+        "f1_ci95": {
+          "lower": 0.0,
+          "upper": 0.0068,
+          "resamples": 1000
+        }
+      },
+      "possivel_desconforto_respiratorio": {
+        "support": 920,
+        "positives": 885,
+        "negatives": 35,
+        "true_positive": 2,
+        "false_positive": 0,
+        "true_negative": 35,
+        "false_negative": 883,
+        "precision": 1.0,
+        "recall": 0.0023,
+        "sensitivity": 0.0023,
+        "specificity": 1.0,
+        "f1": 0.0045,
+        "accuracy": 0.0402,
+        "f1_ci95": {
+          "lower": 0.0,
+          "upper": 0.0113,
+          "resamples": 1000
+        }
+      },
+      "fala_instavel": {
+        "support": 920,
+        "positives": 885,
+        "negatives": 35,
+        "true_positive": 120,
+        "false_positive": 0,
+        "true_negative": 35,
+        "false_negative": 765,
+        "precision": 1.0,
+        "recall": 0.1356,
+        "sensitivity": 0.1356,
+        "specificity": 1.0,
+        "f1": 0.2388,
+        "accuracy": 0.1685,
+        "f1_ci95": {
+          "lower": 0.2039,
+          "upper": 0.2729,
+          "resamples": 1000
+        }
+      },
+      "qualquer_alerta": {
+        "support": 920,
+        "positives": 885,
+        "negatives": 35,
+        "true_positive": 122,
+        "false_positive": 0,
+        "true_negative": 35,
+        "false_negative": 763,
+        "precision": 1.0,
+        "recall": 0.1379,
+        "sensitivity": 0.1379,
+        "specificity": 1.0,
+        "f1": 0.2423,
+        "accuracy": 0.1707,
+        "f1_ci95": {
+          "lower": 0.2065,
+          "upper": 0.2761,
+          "resamples": 1000
+        }
+      },
+      "baseline_sempre_normal": {
+        "support": 920,
+        "positives": 885,
+        "negatives": 35,
+        "true_positive": 0,
+        "false_positive": 0,
+        "true_negative": 35,
+        "false_negative": 885,
+        "precision": 0.0,
+        "recall": 0.0,
+        "sensitivity": 0.0,
+        "specificity": 1.0,
+        "f1": 0.0,
+        "accuracy": 0.038
+      },
+      "baseline_sempre_alerta": {
+        "support": 920,
+        "positives": 885,
+        "negatives": 35,
+        "true_positive": 885,
+        "false_positive": 35,
+        "true_negative": 0,
+        "false_negative": 0,
+        "precision": 0.962,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.0,
+        "f1": 0.9806,
+        "accuracy": 0.962
+      }
+    },
+    "learned_baseline": {
+      "status": "ok",
+      "model": "HistGradientBoostingClassifier",
+      "features": [
+        "duration_seconds",
+        "rms_energy",
+        "voiced_ratio",
+        "pause_ratio",
+        "mean_pause_seconds",
+        "speaking_rate",
+        "pitch_variability",
+        "spectral_centroid_hz",
+        "spectral_rolloff_hz",
+        "spectral_flux",
+        "zero_crossing_rate"
+      ],
+      "cross_validation": "StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42) agrupado por sujeito",
+      "support": 920,
+      "positives": 885,
+      "negatives": 35,
+      "true_positive": 878,
+      "false_positive": 30,
+      "true_negative": 5,
+      "false_negative": 7,
+      "precision": 0.967,
+      "recall": 0.9921,
+      "sensitivity": 0.9921,
+      "specificity": 0.1429,
+      "f1": 0.9794,
+      "accuracy": 0.9598,
+      "roc_auc": 0.9403,
+      "average_precision": 0.9975,
+      "roc_auc_ci95": {
+        "lower": 0.9138,
+        "upper": 0.9632,
+        "resamples": 1000
+      },
+      "average_precision_ci95": {
+        "lower": 0.996,
+        "upper": 0.9987,
+        "resamples": 1000
+      },
+      "f1_ci95": {
+        "lower": 0.9725,
+        "upper": 0.9856,
+        "resamples": 1000
+      }
+    }
+  },
+  "abstentions": {
+    "recordings_without_warning": 798,
+    "note": "No warning code fired for these recordings; they count as negative predictions in the tables above."
+  },
+  "confounds": {
+    "recording_device_vs_healthy_label": {
+      "AKGC417L": {
+        "recordings": 646,
+        "healthy_recordings": 0
+      },
+      "Litt3200": {
+        "recordings": 60,
+        "healthy_recordings": 0
+      },
+      "LittC2SE": {
+        "recordings": 87,
+        "healthy_recordings": 0
+      },
+      "Meditron": {
+        "recordings": 127,
+        "healthy_recordings": 35
+      }
+    },
+    "note": "Every Healthy subject in ICBHI was recorded with a single device and the four devices differ sharply in signal level. The features therefore encode the recording equipment, which is why the diagnosis-based label is predicted far better than the crackle/wheeze label. That secondary result is device recognition and must not be read as clinical capability."
+  },
+  "limitations": [
+    "ICBHI contains lung sounds, not physiotherapy session speech.",
+    "The acoustic flags were tuned for speech; this experiment tests whether they retain any signal on respiratory audio.",
+    "No public dataset labels fatigue or dyspnoea during rehabilitation, so the fatigue flag itself cannot be validated here.",
+    "Crackles/wheezes are a proxy for respiratory abnormality, not a clinical ground truth for the flags.",
+    "The learned baseline uses subject-grouped cross-validation; without grouping, several recordings from the same subject leak across folds and inflate the metrics."
+  ]
+}

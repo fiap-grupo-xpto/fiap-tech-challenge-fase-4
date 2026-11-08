@@ -1,0 +1,221 @@
+{
+  "dataset": {
+    "name": "UCI Parkinson's Disease (sustained-vowel voice measures)",
+    "source": "https://archive.ics.uci.edu/ml/machine-learning-databases/parkinsons/",
+    "citation": "Little MA, McSharry PE, Hunter EJ, Spielman J, Ramig LO (2007) Suitability of dysphonia measurements for telemonitoring of Parkinson's disease. IEEE Transactions on Biomedical Engineering 56(4):1015-1022 (UCI ML Repository, 'Parkinson's Disease', ID 174)",
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0), UCI Machine Learning Repository.",
+    "recordings_used": 195,
+    "recordings_pathological": 147,
+    "recordings_healthy": 48,
+    "subjects": 32
+  },
+  "proxy_label_primary": {
+    "name": "parkinson_diagnosis",
+    "definition": "Row is positive when the published label indicates Parkinson's disease (status = 1).",
+    "rule_based": {
+      "possivel_disartria": {
+        "support": 195,
+        "positives": 147,
+        "negatives": 48,
+        "true_positive": 39,
+        "false_positive": 2,
+        "true_negative": 46,
+        "false_negative": 108,
+        "precision": 0.9512,
+        "recall": 0.2653,
+        "sensitivity": 0.2653,
+        "specificity": 0.9583,
+        "f1": 0.4149,
+        "accuracy": 0.4359,
+        "f1_ci95": {
+          "lower": 0.3218,
+          "upper": 0.5026,
+          "resamples": 1000
+        }
+      },
+      "qualquer_alerta": {
+        "support": 195,
+        "positives": 147,
+        "negatives": 48,
+        "true_positive": 39,
+        "false_positive": 2,
+        "true_negative": 46,
+        "false_negative": 108,
+        "precision": 0.9512,
+        "recall": 0.2653,
+        "sensitivity": 0.2653,
+        "specificity": 0.9583,
+        "f1": 0.4149,
+        "accuracy": 0.4359,
+        "f1_ci95": {
+          "lower": 0.3218,
+          "upper": 0.5026,
+          "resamples": 1000
+        }
+      },
+      "baseline_sempre_normal": {
+        "support": 195,
+        "positives": 147,
+        "negatives": 48,
+        "true_positive": 0,
+        "false_positive": 0,
+        "true_negative": 48,
+        "false_negative": 147,
+        "precision": 0.0,
+        "recall": 0.0,
+        "sensitivity": 0.0,
+        "specificity": 1.0,
+        "f1": 0.0,
+        "accuracy": 0.2462
+      },
+      "baseline_sempre_alerta": {
+        "support": 195,
+        "positives": 147,
+        "negatives": 48,
+        "true_positive": 147,
+        "false_positive": 48,
+        "true_negative": 0,
+        "false_negative": 0,
+        "precision": 0.7538,
+        "recall": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 0.0,
+        "f1": 0.8596,
+        "accuracy": 0.7538
+      }
+    },
+    "learned_baseline": {
+      "status": "ok",
+      "model": "StandardScaler + LogisticRegression",
+      "features": [
+        "jitter_local",
+        "shimmer_local",
+        "hnr"
+      ],
+      "cross_validation": "StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42) agrupado por sujeito",
+      "support": 195,
+      "positives": 147,
+      "negatives": 48,
+      "true_positive": 126,
+      "false_positive": 41,
+      "true_negative": 7,
+      "false_negative": 21,
+      "precision": 0.7545,
+      "recall": 0.8571,
+      "sensitivity": 0.8571,
+      "specificity": 0.1458,
+      "f1": 0.8025,
+      "accuracy": 0.6821,
+      "roc_auc": 0.6509,
+      "average_precision": 0.8661,
+      "roc_auc_ci95": {
+        "lower": 0.5698,
+        "upper": 0.7308,
+        "resamples": 1000
+      },
+      "average_precision_ci95": {
+        "lower": 0.8116,
+        "upper": 0.9159,
+        "resamples": 1000
+      },
+      "f1_ci95": {
+        "lower": 0.7525,
+        "upper": 0.8447,
+        "resamples": 1000
+      }
+    },
+    "dysarthria_calibrated": {
+      "limits": {
+        "jitter_local": 0.7239,
+        "shimmer_local": 2.5474,
+        "hnr": 19.1897
+      },
+      "default_limits": {
+        "jitter_local": 1.04,
+        "shimmer_local": 3.81,
+        "hnr": 20.0
+      },
+      "rule_based": {
+        "possivel_disartria": {
+          "support": 195,
+          "positives": 147,
+          "negatives": 48,
+          "true_positive": 62,
+          "false_positive": 3,
+          "true_negative": 45,
+          "false_negative": 85,
+          "precision": 0.9538,
+          "recall": 0.4218,
+          "sensitivity": 0.4218,
+          "specificity": 0.9375,
+          "f1": 0.5849,
+          "accuracy": 0.5487,
+          "f1_ci95": {
+            "lower": 0.5,
+            "upper": 0.6638,
+            "resamples": 1000
+          }
+        },
+        "qualquer_alerta": {
+          "support": 195,
+          "positives": 147,
+          "negatives": 48,
+          "true_positive": 62,
+          "false_positive": 3,
+          "true_negative": 45,
+          "false_negative": 85,
+          "precision": 0.9538,
+          "recall": 0.4218,
+          "sensitivity": 0.4218,
+          "specificity": 0.9375,
+          "f1": 0.5849,
+          "accuracy": 0.5487,
+          "f1_ci95": {
+            "lower": 0.5,
+            "upper": 0.6638,
+            "resamples": 1000
+          }
+        },
+        "baseline_sempre_normal": {
+          "support": 195,
+          "positives": 147,
+          "negatives": 48,
+          "true_positive": 0,
+          "false_positive": 0,
+          "true_negative": 48,
+          "false_negative": 147,
+          "precision": 0.0,
+          "recall": 0.0,
+          "sensitivity": 0.0,
+          "specificity": 1.0,
+          "f1": 0.0,
+          "accuracy": 0.2462
+        },
+        "baseline_sempre_alerta": {
+          "support": 195,
+          "positives": 147,
+          "negatives": 48,
+          "true_positive": 147,
+          "false_positive": 48,
+          "true_negative": 0,
+          "false_negative": 0,
+          "precision": 0.7538,
+          "recall": 1.0,
+          "sensitivity": 1.0,
+          "specificity": 0.0,
+          "f1": 0.8596,
+          "accuracy": 0.7538
+        }
+      }
+    }
+  },
+  "abstentions": {
+    "recordings_without_warning": 154,
+    "note": "No dysarthria marker fired for these recordings; they count as negative predictions in the tables above."
+  },
+  "limitations": [
+    "The dataset ships precomputed MDVP voice measures, not raw audio; only jitter/shimmer/HNR can be reconstructed, so the full session pipeline is not exercised here.",
+    "Parkinson's hypokinetic dysarthria is a proxy for the dysarthria flag, not a physiotherapy-session ground truth.",
+    "The learned baseline uses subject-grouped cross-validation; several sustained-vowel recordings come from the same speaker."
+  ]
+}
