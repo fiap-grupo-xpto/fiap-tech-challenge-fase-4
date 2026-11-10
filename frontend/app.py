@@ -178,6 +178,7 @@ st.sidebar.title("Navegação do Projeto")
 st.sidebar.caption("FIAP Tech Challenge - Grupo 69")
 
 stage_map = {
+    "🔔 Detecção de anomalias (Fase 4)": 6,
     "🎧 Análise de áudio (Fase 4)": 5,
     "🎥 Análise de movimento (Fase 4)": 4,
     "🩺 Assistente Médico (Fase 3)": 3,
@@ -210,7 +211,12 @@ st.sidebar.caption(f"API Conectada: `{API_URL}`")
 # =========================================================================
 # ETAPA 3: ASSISTENTE VIRTUAL MÉDICO (FASE 3)
 # =========================================================================
-if st.session_state.stage == 3:
+if st.session_state.stage == 6:
+    from anomalies_panel import render_anomalies
+
+    render_anomalies(API_URL)
+
+elif st.session_state.stage == 3:
     st.title("Tech Challenge Fase 03 - Assistente Médico Virtual")
     st.subheader("Orquestração LangChain / LangGraph com Guardrails e Auditoria")
 

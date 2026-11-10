@@ -1,5 +1,14 @@
 # Fase 4 - Analise de Videos de Reabilitacao
 
+## Ponto 3 — Detecção de anomalias
+
+O módulo de sinais vitais, prescrições e movimentação está disponível na opção
+**Detecção de anomalias (Fase 4)**. Consulte [ANOMALIAS.md](ANOMALIAS.md) para
+execução, contrato de entrada, métodos, avaliação sintética e roteiro de demonstração.
+
+Verificação da aplicação completa: [Teste integrado](TESTE_INTEGRADO.md), com
+resultados, falhas existentes no assistente e limitações por recursos ausentes.
+
 Esta pasta contem o fluxo experimental para estimar pose em videos de exercicios
 de reabilitacao, classificar repeticoes como corretas/incorretas e produzir
 metricas e relatorios. O dataset REHAB24-6 contem voluntarios saudaveis; o modelo

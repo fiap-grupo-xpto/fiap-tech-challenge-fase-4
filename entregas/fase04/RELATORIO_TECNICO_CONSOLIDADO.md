@@ -383,7 +383,107 @@ As duas ultimas linhas acrescentam a comparacao com os embeddings profundos; sem
 `torch`/`transformers` instalados a sonda e registrada como `skipped` e o restante
 da avaliacao segue normalmente.
 
-## 8. Referencia
+## 8. Tarefa 3 - Deteccao de Anomalias
+
+Objetivo: monitorar o paciente internado ao longo do tempo e alertar a equipe
+medica quando sinais vitais, prescricoes ou nivel de atividade se afastam do
+historico do proprio paciente. O alerta indica uma mudanca para revisao humana,
+nao um diagnostico. Detalhes de contrato, parametros e execucao estao em
+[ANOMALIAS.md](ANOMALIAS.md).
+
+### Estado por item da tarefa
+
+| Item da tarefa | Estado |
+|---|---|
+| Series temporais de sinais vitais (batimentos, pressao, oxigenacao) | Implementado; avaliado apenas com dados sinteticos |
+| Evolucao de prescricoes | Implementado (regras de mudanca entre versoes da prescricao) |
+| Padroes de movimentacao durante a internacao | Implementado sobre fracao de atividade recebida pela API; sem sensor real nem ligacao com o modulo de video |
+| Alertas automaticos para a equipe medica | Implementado: painel com atualizacao automatica e envio por webhook do Teams/Slack |
+
+### Fluxo
+
+1. Observacoes chegam em `POST /anomalies/observations` (lote ou uma a uma) e
+   sao validadas (unidades, faixas tecnicas, fuso horario, ordem temporal).
+2. Cada observacao e comparada somente com o passado do mesmo paciente e do mesmo
+   fluxo (sinais vitais, atividade ou um medicamento especifico).
+3. Uma anomalia confirmada gera um alerta gravado no SQLite com a evidencia
+   (valor, mediana do historico, escore, contexto) e uma pendencia de envio
+   persistente, na mesma transacao.
+4. Apos a resposta, o alerta e enviado ao canal da equipe (`ALERT_WEBHOOK_URL`)
+   e o resultado do envio fica registrado.
+5. O painel Streamlit (opcao **Deteccao de anomalias (Fase 4)**) se atualiza a
+   cada 5 s, avisa quando chega um alerta novo e permite marcar como visto e
+   exportar o relatorio do paciente em JSON.
+
+### Modelos aplicados
+
+- **Sinais vitais e atividade:** mediana e desvio absoluto mediano (MAD) das
+  ultimas 12 leituras comparaveis (minimo 6). Escore
+  `|valor - mediana| / max(1,4826 * MAD, piso)`; candidato se >= 3,5. O alerta
+  exige dois candidatos seguidos na mesma direcao, o que filtra picos isolados.
+  Lacuna maior que 15 min ou mudanca de contexto (acordado/repouso) reinicia a
+  referencia. Metodo estatistico robusto, sem treinamento supervisionado.
+- **Prescricoes:** comparacao com a versao anterior do mesmo medicamento.
+  Variacao de 50% ou mais na dose ou na frequencia, ou mudanca de via, unidade ou
+  status, gera alerta imediato. Doses em unidades diferentes nao sao comparadas
+  numericamente.
+
+Os limiares sao fixos e experimentais, definidos antes da avaliacao; nao sao
+limites clinicos.
+
+### Resultados e exemplos de anomalias detectadas
+
+Avaliacao sintetica reproduzivel com 60 pacientes (20 sementes por cenario).
+Os rotulos vem dos intervalos em que a alteracao foi injetada, nao da saida do
+detector.
+
+| Cenario | Frente | Precisao | Recall | F1 |
+|---|---|---:|---:|---:|
+| Normal | Todas | - | - | 0 falsos positivos em 760 observacoes |
+| Mudanca forte | Sinais vitais | 100% | 75% | 85,71% |
+| Mudanca forte | Movimento | 100% | 75% | 85,71% |
+| Mudanca forte | Prescricao | 100% | 100% | 100% |
+| Mudanca sutil | Todas | - | 0% | 0% |
+
+O recall de 75% nas mudancas fortes vem da regra de confirmacao: o primeiro ponto
+alterado nunca gera alerta sozinho. O recall zero nas mudancas sutis (por exemplo
++5 bpm, ou dose de 10 mg para 12 mg) e uma limitacao assumida dos limiares.
+
+Exemplos da demonstracao (paciente sintetico, 51 eventos, 6 alertas):
+
+- `heart_rate_high`: batimentos sobem cerca de 35 bpm acima da mediana do
+  historico (~75 bpm), confirmados em duas leituras seguidas.
+- `spo2_low`: saturacao cai cerca de 7 pontos em relacao ao historico (~97%).
+- `systolic_high` e `diastolic_high`: aumento de cerca de 30 e 22 mmHg.
+- `activity_fraction_low`: atividade cai de ~55% para ~8% do tempo na janela.
+- `prescription_change`: dose do medicamento ficticio passa de 10 mg para 20 mg
+  (variacao de 100%).
+
+Resultados completos: [`results/anomalies_evaluation.json`](results/anomalies_evaluation.json).
+
+### Limitacoes
+
+- Dados exclusivamente sinteticos; nao ha validacao clinica nem dados do PhysioNet.
+- A atividade e recebida pela API; nao e extraida do video nem de sensores reais.
+- Nao ha fusao automatica com os resultados de audio e video.
+- Pendencias e tentativas interrompidas sao recuperadas por um processador da
+  API. Falhas ja registradas nao sao reenviadas automaticamente. Se o destino
+  receber a mensagem antes de uma interrupcao que impeça gravar o sucesso,
+  a recuperacao pode duplicar a mensagem; o ID do alerta permite identifica-la.
+  Alertas anteriores a essa fila nao sao reenviados retroativamente.
+- Sem autenticacao, identificacao do profissional ou integracao com prontuario.
+
+### Verificacao
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tests/fase04/test_anomalies.py tests/fase04/test_anomalies_ui.py tests/fase04/test_notification_recovery.py tests/fase04/test_integrated_application.py -q
+.\.venv\Scripts\python.exe -m entregas.fase04.src.evaluate_anomalies
+```
+
+Verificacao ampliada inclui fila persistente, recuperacao apos interrupcao,
+concorrencia, URL invalida, webhook local, interface e integracao da API principal.
+
+## 9. Referencia
 
 Černek, A., Sedmidubsky, J., Budikova, P. *REHAB24-6: Physical Therapy Dataset
 for Analyzing Pose Estimation Methods*. SISAP, Springer, 2024.

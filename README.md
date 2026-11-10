@@ -16,6 +16,7 @@ Repositório da **Fase 4 do Tech Challenge FIAP** (Grupo 69): estimativa de pose
 - [Guia da Fase 4](entregas/fase04/README.md): treinamento, execução e testes.
 - [Relatório Técnico Consolidado](entregas/fase04/RELATORIO_TECNICO_CONSOLIDADO.md): escopo, metodologia, resultados e limitações.
 - [Instruções do dataset](entregas/fase04/data/README.md): fonte, licença e download.
+- [Ponto 3 — Detecção de anomalias](entregas/fase04/ANOMALIAS.md): monitoramento de sinais vitais, prescrições e atividade, alertas persistentes e demonstração sintética.
 
 ## Como executar
 

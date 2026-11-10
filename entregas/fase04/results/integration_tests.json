@@ -1,0 +1,129 @@
+{
+  "date": "2026-11-10",
+  "python": "3.14.3",
+  "command": "python -m pytest tests -q --basetemp=tmp/integrated-suite-1 --tb=short -o faulthandler_timeout=60 --junitxml=tmp/integrated-suite-1.xml",
+  "environment": {
+    "ITEM1_PRELOAD": "false"
+  },
+  "versions": {
+    "fastapi": "0.162.2",
+    "pydantic": "2.14.3",
+    "streamlit": "1.67.0",
+    "numpy": "2.5.4",
+    "pandas": "3.1.1",
+    "scikit-learn": "1.9.1",
+    "langgraph": "1.2.20",
+    "langchain-core": "1.7.7",
+    "pytest": "9.2.0"
+  },
+  "groups": {
+    "assistant": {
+      "passed": 48,
+      "failed": 19,
+      "skipped": 0
+    },
+    "fase04": {
+      "passed": 111,
+      "failed": 0,
+      "skipped": 3
+    },
+    "previous_phases": {
+      "passed": 8,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "failures": [
+    {
+      "test": "tests.assistant.test_guardrails::test_check_output_safety_blocks_dosage_instruction",
+      "message": "assert False is True\n +  where False = GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]).blocked"
+    },
+    {
+      "test": "tests.assistant.test_guardrails::test_check_output_safety_blocks_definitive_diagnosis",
+      "message": "assert False is True\n +  where False = GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]).blocked"
+    },
+    {
+      "test": "tests.assistant.test_guardrails::test_check_output_safety_blocks_treatment_instruction_without_dosage",
+      "message": "assert False is True\n +  where False = GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]).blocked"
+    },
+    {
+      "test": "tests.assistant.test_guardrails::test_check_output_safety_blocks_bare_definitive_diagnosis",
+      "message": "assert False is True\n +  where False = GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]).blocked"
+    },
+    {
+      "test": "tests.assistant.test_guardrails::test_check_output_safety_blocks_english_dosage_instruction",
+      "message": "assert False is True\n +  where False = GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]).blocked"
+    },
+    {
+      "test": "tests.assistant.test_guardrails::test_check_output_safety_blocks_english_prescription_verb",
+      "message": "assert False is True\n +  where False = GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]).blocked"
+    },
+    {
+      "test": "tests.assistant.test_guardrails::test_check_output_safety_blocks_english_definitive_diagnosis",
+      "message": "assert False is True\n +  where False = GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]).blocked"
+    },
+    {
+      "test": "tests.assistant.test_guardrails::test_check_output_safety_blocks_use_verb_with_administration_route",
+      "message": "assert False is True\n +  where False = GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]).blocked"
+    },
+    {
+      "test": "tests.assistant.test_guardrails::test_check_output_safety_blocks_tome_without_explicit_dosage",
+      "message": "assert False is True\n +  where False = GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]).blocked"
+    },
+    {
+      "test": "tests.assistant.test_guardrails::test_new_prescriptions_and_negation",
+      "message": "AssertionError: assert False\n +  where False = GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]).blocked\n +    where GuardrailResult(blocked=False, requires_human_review=False, reason=None, matched_rules=[]) = check_output_safety('Inicie amoxicilina.')"
+    },
+    {
+      "test": "tests.assistant.test_llm_adapter::test_auto_fallback_skips_primary_when_not_available",
+      "message": "AssertionError: assert 'item1_custom_llm' == 'gemini_fallback'\n  \n  - gemini_fallback\n  + item1_custom_llm"
+    },
+    {
+      "test": "tests.assistant.test_quality::test_context_examples_have_grouped_variants_and_real_prompt",
+      "message": "AssertionError: assert 130 == 60\n +  where 130 = len([{'qid': 'SYN-000', 'question_type': 'synthetic_context', 'question_anon': 'Pergunta clínica:\\nQual exame está pendent...YN-002].\\nFontes utilizadas: [SYN-002].\\nObservação: Requer validação humana; não permite concluir diagnóstico.'}, ...])"
+    },
+    {
+      "test": "tests.assistant.test_workflow::test_run_assistant_query_blocks_prescriptive_answer",
+      "message": "AssertionError: assert 'success' == 'blocked'\n  \n  - blocked\n  + success"
+    },
+    {
+      "test": "tests.assistant.test_workflow::test_run_assistant_query_reports_error_instead_of_fake_success_on_generation_failure",
+      "message": "AssertionError: assert 'success' == 'error'\n  \n  - error\n  + success"
+    },
+    {
+      "test": "tests.assistant.test_workflow::test_run_assistant_query_flags_uncited_protocol_reference_without_blocking",
+      "message": "AssertionError: assert 'success' == 'blocked'\n  \n  - blocked\n  + success"
+    },
+    {
+      "test": "tests.assistant.test_workflow::test_blocked_derived_fields_do_not_escape",
+      "message": "AssertionError: assert 'success' == 'blocked'\n  \n  - blocked\n  + success"
+    },
+    {
+      "test": "tests.assistant.test_workflow::test_fallback_error_survives_non_success[True-]",
+      "message": "AssertionError: assert 'success' == 'error'\n  \n  - error\n  + success"
+    },
+    {
+      "test": "tests.assistant.test_workflow::test_fallback_error_survives_non_success[False-Tome dois comprimidos por dia.]",
+      "message": "AssertionError: assert 'success' == 'blocked'\n  \n  - blocked\n  + success"
+    },
+    {
+      "test": "tests.assistant.test_workflow::test_missing_sources_blocked_and_audited",
+      "message": "AssertionError: assert 'success' == 'blocked'\n  \n  - blocked\n  + success"
+    }
+  ],
+  "skips": [
+    {
+      "test": "tests.fase04.test_azure_audio_live::test_live_language_analysis_returns_sentiment",
+      "reason": "AZURE_LANGUAGE_KEY/AZURE_LANGUAGE_ENDPOINT not set"
+    },
+    {
+      "test": "tests.fase04.test_azure_audio_live::test_live_transcription_returns_transcript",
+      "reason": "AZURE_SPEECH_KEY/AZURE_SPEECH_REGION not set"
+    },
+    {
+      "test": "tests.fase04.test_embeddings::test_extract_embeddings_returns_fixed_dimension_vector",
+      "reason": "torch/transformers not installed"
+    }
+  ],
+  "note": "All assistant source and tests were unchanged from HEAD. Environment uses Python 3.14 and newer dependencies; this is not validation of the pinned Python 3.11 production environment."
+}

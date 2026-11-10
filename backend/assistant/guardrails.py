@@ -184,8 +184,15 @@ def check_output_safety(answer_text: str) -> GuardrailResult:
         if not re.match(
             r"^\s*(?:"
             r"nao\s+(?:tome|use|inicie|administre)|"
-            r"do\s+not\s+(?:take|use|start)|"
+            r"do\s+not\s+(?:take|use|start)"
             r")\b",
+            clause,
+        )
+        # Only a clause that is nothing but the negation is dropped, so
+        # "nao ha diagnostico confirmado, o paciente tem X" is still checked.
+        and not re.fullmatch(
+            r"\s*(?:nao\s+(?:ha|existe)|sem)\s+diagnostico\s+(?:confirmado|definitivo)\s*"
+            r"|\s*(?:there\s+is\s+)?no\s+(?:confirmed|definitive)\s+diagnosis\s*",
             clause,
         )
     )

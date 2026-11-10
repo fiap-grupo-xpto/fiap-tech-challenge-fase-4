@@ -19,6 +19,8 @@ from backend.assistant.llm_adapter import AssistantProviderSelector
 import logging
 from backend.rehab_video.service import analyze_repetition, annotate_repetition_video
 from backend.rehab_audio.service import analyze_session_audio
+from backend.anomalies.api import router as anomalies_router
+from backend.anomalies.notifier import notification_worker
 import os
 
 logger = logging.getLogger(__name__)
@@ -156,7 +158,8 @@ async def lifespan(app: FastAPI):
         except Exception as exc:
             # O modo auto ainda pode usar Gemini; a causa fica explícita no log.
             logger.warning("Item1 model preload failed; fallback remains available: %s", exc)
-    yield
+    with notification_worker():
+        yield
     # Clean up the ML model and release resources
     app.state.model = None
     app.state.image_model_error = None
@@ -165,6 +168,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(debug=True, lifespan=lifespan)
+app.include_router(anomalies_router)
 
 
 @app.post("/analyze-tabular")

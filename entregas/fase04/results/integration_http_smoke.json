@@ -1,0 +1,31 @@
+{
+  "date": "2026-11-10",
+  "transport": "real HTTP loopback, uvicorn backend.main:app",
+  "synthetic_inputs": true,
+  "external_services_called": false,
+  "checks": {
+    "startup_and_openapi": 200,
+    "shared_routes": true,
+    "generated_alerts": 6,
+    "acknowledge": 200,
+    "duplicate_new_alerts": 0,
+    "audio_without_azure": {
+      "status": 503,
+      "detail": "Credenciais do Azure nao configuradas para analise de audio."
+    },
+    "video_without_artifact": {
+      "status": 503,
+      "detail": "Rehabilitation classifier is not trained. Run `py -3.11 entregas\\fase04\\src\\train_classifier.py` first."
+    },
+    "assistant_without_llm": {
+      "http_status": 200,
+      "status": "success",
+      "message": "A saída da LLM foi retida; a resposta exibida é uma síntese segura e determinística.",
+      "requires_human_review": true
+    },
+    "anomalies_after_other_modules": {
+      "status": 200,
+      "alerts": 6
+    }
+  }
+}

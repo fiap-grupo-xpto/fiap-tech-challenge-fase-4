@@ -1,0 +1,119 @@
+{
+  "dataset": "synthetic-only",
+  "seeds": [
+    1000,
+    1019
+  ],
+  "patients": 60,
+  "method": "robust-history-v1",
+  "unit": "observation per domain after warm-up",
+  "labeling": "Known injected intervals, including the first changed sample; not detector-derived labels.",
+  "limitations": "Synthetic benchmark, no clinical validity. Thresholds fixed before evaluation; no fitted model. Seeds differ from UI demo (42).",
+  "results": {
+    "normal": {
+      "vitals": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 360,
+        "fn": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "accuracy": 1.0,
+        "always_normal_accuracy": 1.0
+      },
+      "movement": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 360,
+        "fn": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "accuracy": 1.0,
+        "always_normal_accuracy": 1.0
+      },
+      "prescription": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 40,
+        "fn": 0,
+        "precision": null,
+        "recall": null,
+        "f1": null,
+        "accuracy": 1.0,
+        "always_normal_accuracy": 1.0
+      }
+    },
+    "strong_change": {
+      "vitals": {
+        "tp": 60,
+        "fp": 0,
+        "tn": 280,
+        "fn": 20,
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571,
+        "accuracy": 0.9444,
+        "always_normal_accuracy": 0.7778
+      },
+      "movement": {
+        "tp": 60,
+        "fp": 0,
+        "tn": 280,
+        "fn": 20,
+        "precision": 1.0,
+        "recall": 0.75,
+        "f1": 0.8571,
+        "accuracy": 0.9444,
+        "always_normal_accuracy": 0.7778
+      },
+      "prescription": {
+        "tp": 20,
+        "fp": 0,
+        "tn": 20,
+        "fn": 0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "accuracy": 1.0,
+        "always_normal_accuracy": 0.5
+      }
+    },
+    "subtle_change": {
+      "vitals": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 280,
+        "fn": 80,
+        "precision": null,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.7778,
+        "always_normal_accuracy": 0.7778
+      },
+      "movement": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 280,
+        "fn": 80,
+        "precision": null,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.7778,
+        "always_normal_accuracy": 0.7778
+      },
+      "prescription": {
+        "tp": 0,
+        "fp": 0,
+        "tn": 20,
+        "fn": 20,
+        "precision": null,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.5,
+        "always_normal_accuracy": 0.5
+      }
+    }
+  }
+}
