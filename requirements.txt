@@ -1,5 +1,6 @@
 fastapi[standard]
 streamlit
+pyarrow==23.0.1
 pandas
 gunicorn
 uvicorn

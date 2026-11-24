@@ -60,7 +60,7 @@ def test_live_language_analysis_returns_sentiment():
 
     result = client.analyze("Estou com muita dor no joelho e cansaco.")
 
-    assert result["sentiment"]["label"] in {"positive", "neutral", "negative"}
+    assert result["sentiment"]["label"] in {"positive", "neutral", "negative", "mixed"}
     assert isinstance(result["key_phrases"], list)
     assert isinstance(result["entities"], list)
 
@@ -81,5 +81,5 @@ def test_live_transcription_returns_transcript():
 
     result = client.transcribe(Path(sample))
 
-    assert isinstance(result["transcript"], str)
+    assert result["transcript"].strip(), "Azure Speech did not return recognized speech"
     assert result["language"] == _live_language()

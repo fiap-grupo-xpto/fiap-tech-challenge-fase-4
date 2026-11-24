@@ -122,6 +122,17 @@ def dashboard(patient_id: str) -> dict:
             "limit": 500}
 
 
+def alerts_in_window(patient_id: str, start: datetime, end: datetime) -> list[dict]:
+    with connection() as db:
+        rows = db.execute(
+            "SELECT payload, acknowledged_at FROM alerts "
+            "WHERE patient_id=? AND timestamp BETWEEN ? AND ? ORDER BY timestamp, id",
+            (patient_id, start.astimezone(timezone.utc).isoformat(),
+             end.astimezone(timezone.utc).isoformat()),
+        ).fetchall()
+    return [{**json.loads(row["payload"]), "acknowledged_at": row["acknowledged_at"]} for row in rows]
+
+
 def acknowledge(alert_id: str) -> dict | None:
     with connection() as db:
         with db:

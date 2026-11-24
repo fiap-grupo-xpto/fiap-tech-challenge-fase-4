@@ -8,11 +8,12 @@ def test_transcribe_parses_word_segments(monkeypatch, tmp_path, fake_response):
     audio_path = tmp_path / "sample.wav"
     audio_path.write_bytes(b"RIFFfakeaudio")
     payload = {
-        "DisplayText": "repita o movimento",
+        "RecognitionStatus": "Success",
         "Duration": 11_000_000,
         "NBest": [
             {
                 "Confidence": 0.9,
+                "Display": "repita o movimento",
                 "Words": [
                     {
                         "Word": "repita",
@@ -99,4 +100,5 @@ def test_transcribe_sends_wav_content_type(monkeypatch, tmp_path, fake_response)
     wav_path.write_bytes(b"data")
     AzureSpeechClient("key", "region").transcribe(wav_path)
 
-    assert captured["headers"]["Content-Type"] == "audio/wav"
+    assert captured["headers"]["Content-Type"] == "audio/wav; codecs=audio/pcm; samplerate=16000"
+    assert captured["headers"]["Accept"] == "application/json"

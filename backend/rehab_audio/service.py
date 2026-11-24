@@ -64,19 +64,21 @@ def analyze_session_audio(
     audio_path: Path | str,
     language: str | None = None,
 ) -> dict:
-    data, sample_rate = sf.read(str(audio_path), dtype="float32", always_2d=False)
-    duration = len(data) / sample_rate if sample_rate else 0.0
-    if duration > MAX_AUDIO_SECONDS:
-        raise ValueError(
-            f"Audio exceeds the {MAX_AUDIO_SECONDS} second limit for this analysis."
-        )
-
-    channels = data.shape[1] if data.ndim > 1 else 1
-    if sample_rate != AZURE_STT_SAMPLE_RATE or channels > 1:
-        raise ValueError(
-            "O Azure Speech (audio curto) exige WAV PCM 16 kHz mono; "
-            f"recebido {sample_rate} Hz com {channels} canal(is)."
-        )
+    try:
+        with sf.SoundFile(str(audio_path)) as audio:
+            sample_rate = audio.samplerate
+            if (
+                audio.format not in {"WAV", "WAVEX"}
+                or audio.subtype != "PCM_16"
+                or sample_rate != AZURE_STT_SAMPLE_RATE
+                or audio.channels != 1
+            ):
+                raise ValueError("O Azure Speech exige WAV PCM de 16 bits, 16 kHz, mono.")
+            if audio.frames > MAX_AUDIO_SECONDS * sample_rate:
+                raise ValueError(f"O áudio excede o limite de {MAX_AUDIO_SECONDS} segundos.")
+            data = audio.read(dtype="float32")
+    except sf.LibsndfileError as exc:
+        raise ValueError("Não foi possível decodificar o arquivo WAV.") from exc
 
     speech_client = _get_stt_client()
     if language and language != speech_client.language:

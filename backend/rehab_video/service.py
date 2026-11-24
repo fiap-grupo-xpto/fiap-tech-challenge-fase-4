@@ -91,11 +91,13 @@ def analyze_repetition(
     exercise_id: int,
     start_frame: int = 0,
     end_frame: int | None = None,
-    model_path: Path | str = MODEL_PATH,
+    model_path: Path | str | None = None,
 ) -> dict:
     if exercise_id not in range(1, 7):
         raise ValueError("exercise_id must be between 1 and 6.")
-    artifact_path = Path(model_path)
+    artifact_path = Path(model_path) if model_path is not None else Path(
+        os.getenv("REHAB_POSE_MODEL_PATH") or MODEL_PATH
+    )
     if not artifact_path.is_file():
         raise FileNotFoundError(
             "Rehabilitation classifier is not trained. Run "
@@ -108,6 +110,9 @@ def analyze_repetition(
             "The rehabilitation model uses an incompatible feature definition. "
             "Retrain it with the current project version."
         )
+    supported_exercises = artifact.get("supported_exercises")
+    if supported_exercises is not None and exercise_id not in supported_exercises:
+        raise ValueError("The rehabilitation classifier was not trained for this exercise.")
     sample_count = int(artifact.get("sample_frames", 12))
     poses = extract_pose_sequence(
         video_path,

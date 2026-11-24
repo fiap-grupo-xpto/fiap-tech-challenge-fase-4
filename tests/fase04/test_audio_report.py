@@ -9,6 +9,7 @@ CONTRACT_KEYS = {
     "sentiment",
     "azure_key_phrases",
     "azure_entities",
+    "azure_critical_terms",
     "acoustic_findings",
     "metrics",
     "voice_alteration",
@@ -75,7 +76,7 @@ def test_build_support_report_returns_full_contract():
     assert report["status"] == "success"
     assert report["transcript"] == "repita o movimento, estou com dor"
     assert report["requires_human_review"] is True
-    assert report["report_version"] == "1.0"
+    assert report["report_version"] == "1.1"
 
 
 def test_build_support_report_includes_azure_insights():
@@ -84,6 +85,21 @@ def test_build_support_report_includes_azure_insights():
     assert report["azure_key_phrases"] == ["dor"]
     assert report["azure_entities"] == [
         {"text": "joelho", "category": "BodyPart"}
+    ]
+    assert report["azure_critical_terms"] == [
+        {"term": "dor", "source": "frase-chave", "excerpt": "dor"}
+    ]
+
+
+def test_azure_critical_terms_need_transcript_and_azure_evidence():
+    transcription, text_analysis, metrics, findings, terms = _sample_inputs()
+    text_analysis["key_phrases"] = ["cansaço", "repita", "dor no joelho", "dor no joelho"]
+    text_analysis["entities"] = [{"text": "dor", "category": "Symptom"}]
+    report = build_support_report(transcription, text_analysis, metrics, findings, terms)
+
+    assert report["azure_critical_terms"] == [
+        {"term": "dor", "source": "frase-chave", "excerpt": "dor no joelho"},
+        {"term": "dor", "source": "entidade", "excerpt": "dor"},
     ]
 
 

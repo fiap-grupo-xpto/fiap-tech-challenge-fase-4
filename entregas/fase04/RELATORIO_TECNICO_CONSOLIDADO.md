@@ -84,23 +84,24 @@ artefatos locais excluidos do Git.
    Streamlit. Upload limitado a 250 MiB por padrao; a API aceita MP4 e frame
    range zero-based.
 
-Como os ZIPs de articulacoes 2D/3D nao estao disponiveis localmente, nao foi
-possivel comparar a pose estimada com ground truth. O baseline e somente a
-classe majoritaria, nao uma referencia de pose.
+Os nove arquivos do REHAB24-6 foram baixados e verificados por checksum,
+incluindo os ZIPs de articulações 2D/3D. A comparação quantitativa da pose
+estimada com essas articulações ainda não foi executada. O baseline do
+experimento é a classe majoritária.
 
 ## 5. Estado da entrega
 
 - [x] Definicao do escopo de video de reabilitacao.
 - [x] Selecao e avaliacao de adequacao do REHAB24-6.
-- [x] Dados: anotacoes e 130 videos extraidos em `Ex1` a `Ex6`.
+- [x] Dados: pacote completo do REHAB24-6 verificado por checksum. O experimento original usou vídeos de `Ex1` a `Ex6`.
 - [x] Pipeline de pose, treinamento, avaliacao e testes automatizados.
 - [x] Integracao com API FastAPI e interface Streamlit.
 - [x] Treinamento integral e consolidacao das metricas no conjunto de teste.
 - [x] Smoke test de inferencia real pela rota FastAPI.
-- [ ] Comparacao com ground truth de pose: pendente dos ZIPs de articulacoes.
+- [ ] Comparação quantitativa da pose com as articulações de referência do REHAB24-6.
 
-Os 77 testes automatizados da Fase 4 passaram (52 de audio e 25 de video). O
-experimento utilizou os 65
+Na rodada original de áudio e vídeo, 77 testes automatizados passaram (52 de
+áudio e 25 de vídeo). O experimento utilizou os 65
 videos da Camera17, com 1.072 repeticoes anotadas. A divisao por participante
 resultou em 600 repeticoes para treino (participantes 3, 4, 5, 7, 8 e 10), 250
 para validacao (1 e 9) e 222 para teste (2 e 6), sem participantes compartilhados.
@@ -146,10 +147,10 @@ fisioterapeuta.
 
 | Item da tarefa | Estado |
 |---|---|
-| Processar audios de consultas medicas | Implementado para sessao de reabilitacao, nao verificado contra o Azure |
+| Processar áudios de consultas médicas | Implementado para sessões de reabilitação e demonstrado com um WAV sintético em português. |
 | Detectar alteracoes vocais indicativas | Implementado (inclui disartria); sinal fraco em base de voz rotulada (ROC-AUC 0,61) |
-| Azure Speech to Text | Integrado no codigo; nao executado com credenciais reais |
-| Termos criticos e sentimento com Azure Text Analytics | Integrado no codigo; nao executado com credenciais reais |
+| Azure Speech to Text | Transcrição real validada no ensaio e exibida no vídeo. |
+| Termos críticos e sentimento com Azure Text Analytics | Sentimento e frases-chave obtidos no Azure AI Language. O projeto cruza os trechos destacados com seu dicionário de termos críticos. |
 
 **1. Processar audios de consultas medicas - implementado em escopo restrito.**
 - A rota `POST /analyze-rehabilitation-audio` (`backend/main.py`) aceita apenas
@@ -161,8 +162,8 @@ fisioterapeuta.
   lote, que nao foi implementada.
 - Escopo atendido: sessoes de fisioterapia. Consultas medicas genericas e
   cirurgias nao sao atendidas.
-- Nao verificado: nao houve execucao contra o Azure real; os testes cobrem a rota
-  com o Azure simulado.
+- Validação final: um WAV sintético de sete segundos em português foi
+  processado pela rota com os dois serviços Azure reais.
 
 **2. Detectar alteracoes vocais indicativas de condicoes medicas - implementado;
 sinal fraco para alteracao vocal e conservador para disartria.**
@@ -298,16 +299,15 @@ Metodologia de avaliacao:
 - Ressalva: o ROC-AUC de validacao e 0,61; o componente e apoio experimental, nao
   um classificador clinico.
 
-**3. Utilizar Azure Speech to Text - integrado, nao verificado.**
+**3. Azure Speech to Text**
 - `backend/rehab_audio/transcription.py` chama o endpoint REST de fala para texto
   com chave e regiao, `language=pt-BR`, saida detalhada e tempos por palavra. O
   endpoint de audio curto usado limita cada arquivo a 60 segundos, sem
   diarizacao.
-- Nao verificado: nenhuma transcricao real foi produzida; faltam
-  `AZURE_SPEECH_KEY` e `AZURE_SPEECH_REGION`.
+- Na gravação, o serviço reconheceu “Estou com dor no joelho e cansaço
+  quando agacho. Começou nesta repetição e ainda sinto desconforto.”
 
-**4. Identificar termos criticos e sentimentos com Azure Text Analytics -
-integrado, nao verificado.**
+**4. Termos críticos e sentimento com Azure Text Analytics**
 - `backend/rehab_audio/text_analysis.py` chama o Azure AI Language (denominacao
   atual do Text Analytics) para sentimento, frases-chave e entidades. Os tres
   resultados aparecem no relatorio como `sentiment`, `azure_key_phrases` e
@@ -315,7 +315,9 @@ integrado, nao verificado.**
 - Termos criticos: extraidos por dicionario local em `backend/rehab_audio/terms.py`,
   com as categorias `sintoma`, `esforco`, `escalada` e `instrucao`, por
   correspondencia de palavra inteira.
-- Nao verificado: faltam `AZURE_LANGUAGE_KEY` e `AZURE_LANGUAGE_ENDPOINT`.
+- Na gravação, o serviço retornou sentimento negativo e seis frases-chave.
+  O relatório encontrou `dor` e `cansaco` e apresentou os termos críticos
+  que também ocorreram nos trechos destacados pelo Azure.
 
 ### Adequacao dos datasets avaliados
 
@@ -398,7 +400,7 @@ nao um diagnostico. Detalhes de contrato, parametros e execucao estao em
 | Series temporais de sinais vitais (batimentos, pressao, oxigenacao) | Implementado; avaliado apenas com dados sinteticos |
 | Evolucao de prescricoes | Implementado (regras de mudanca entre versoes da prescricao) |
 | Padroes de movimentacao durante a internacao | Implementado sobre fracao de atividade recebida pela API; sem sensor real nem ligacao com o modulo de video |
-| Alertas automaticos para a equipe medica | Implementado: painel com atualizacao automatica e envio por webhook do Teams/Slack |
+| Alertas automáticos para a equipe médica | Painel com atualização automática e entrega por webhook. O envio foi confirmado em um canal de teste do Slack. |
 
 ### Fluxo
 
@@ -465,7 +467,7 @@ Resultados completos: [`results/anomalies_evaluation.json`](results/anomalies_ev
 
 - Dados exclusivamente sinteticos; nao ha validacao clinica nem dados do PhysioNet.
 - A atividade e recebida pela API; nao e extraida do video nem de sensores reais.
-- Nao ha fusao automatica com os resultados de audio e video.
+- O detector temporal avalia os fluxos em separado. A revisão multimodal usa os alertas confirmados como contexto da sessão.
 - Pendencias e tentativas interrompidas sao recuperadas por um processador da
   API. Falhas ja registradas nao sao reenviadas automaticamente. Se o destino
   receber a mensagem antes de uma interrupcao que impeça gravar o sucesso,
@@ -480,10 +482,47 @@ Resultados completos: [`results/anomalies_evaluation.json`](results/anomalies_ev
 .\.venv\Scripts\python.exe -m entregas.fase04.src.evaluate_anomalies
 ```
 
-Verificacao ampliada inclui fila persistente, recuperacao apos interrupcao,
-concorrencia, URL invalida, webhook local, interface e integracao da API principal.
+A verificação ampliada cobre fila persistente, recuperação após interrupção,
+concorrência, URL inválida, webhook local, interface e integração da API principal.
+Na gravação final, o backend registrou o envio dos seis alertas sintéticos ao
+Slack e a marcação como visto do alerta de oxigenação.
 
-## 9. Referencia
+## 9. Revisão multimodal por sessão
+
+A tela **Caso multimodal** recebe o identificador do paciente, o intervalo da sessão com fuso horário, a nota de atendimento, um WAV e o MP4 de uma repetição. A API executa os pipelines de áudio e vídeo e consulta no SQLite os alertas confirmados daquele paciente dentro do intervalo, incluindo os dois limites.
+
+| Fonte | Evidência usada na revisão |
+|---|---|
+| Nota de atendimento | Menções a termos críticos encontrados pelo vocabulário de reabilitação. |
+| Áudio | Indicadores acústicos de nível `warning` e sinalização do classificador vocal, quando disponível. Transcrição, sentimento e termos críticos encontrados nos trechos destacados pelo Azure aparecem como contexto. |
+| Vídeo | Classificação da repetição e desvios encontrados nas medidas de pose. |
+| Monitoramento | Alertas já confirmados de sinais vitais, prescrições ou atividade na janela da sessão. |
+
+A revisão é priorizada quando existe ao menos um alerta na janela e há sinais em pelo menos duas das três modalidades (nota, áudio e vídeo). Um achado isolado ou um alerta isolado sinaliza revisão. O relatório exportável mostra as fontes que contribuíram e os IDs dos alertas. Como o vocabulário é lexical, uma menção no texto pode exigir leitura do contexto. O nível é experimental e requer revisão humana.
+
+O caso sintético percorre o detector e a fila de envio com 51 observações. Na amostra de agachamento simulada, a nota menciona dor, o áudio tem um indicador de possível fadiga e o vídeo apresenta amplitude reduzida. Os seis alertas confirmados e esses sinais produzem **Revisão prioritária**. Os resultados de mídia desse modo são simulados. A opção **Enviar áudio e vídeo** usa inferência e Azure configurados.
+
+O painel de monitoramento continua responsável pelo envio automático e pela marcação como visto. A composição de um relatório com mídias enviadas consulta os alertas já registrados. O relatório fica disponível na interface para exportação em JSON.
+
+### Validação da entrega final
+
+No caso `DEMO-G69-VIDEO-01`, a interface processou um WAV sintético e um MP4
+com Azure Speech, Azure AI Language e YOLOv8 Pose. O resultado foi **Revisão
+prioritária**. O classificador de agachamento indicou execução possivelmente
+correta, e as regras detectaram amplitude reduzida e assimetria. O relatório
+de áudio registrou sentimento negativo, termos críticos e um indicador
+acústico experimental de possível disartria.
+
+Os seis alertas da janela foram associados ao caso. O alerta de oxigenação
+`0f79839b-cfab-46d7-bfb8-9e445cfb2ffb` apareceu no relatório e no canal de
+teste do Slack. A marcação como visto ficou registrada no painel. A suíte da
+Fase 4 com os serviços Azure ativos teve **129 testes aprovados e um
+ignorado**. Os dados de monitoramento são sintéticos.
+
+Veja o [guia da Fase 4](README.md), a [validação integrada](TESTE_INTEGRADO.md)
+e o [roteiro do vídeo](ROTEIRO_VIDEO.md).
+
+## 10. Referencia
 
 Černek, A., Sedmidubsky, J., Budikova, P. *REHAB24-6: Physical Therapy Dataset
 for Analyzing Pose Estimation Methods*. SISAP, Springer, 2024.

@@ -98,6 +98,7 @@ def render_board(api, patient):
     for alert in alerts:
         with st.expander(f"{'Visto' if alert['acknowledged_at'] else 'Novo'} | {alert['timestamp']} | {alert['code']}"):
             st.warning(alert["message"])
+            st.caption(f"ID do alerta: {alert['id']}")
             st.json(alert["evidence"])
             delivery = alert.get("delivery")
             if delivery and delivery["status"] in ("pending", "sending"):

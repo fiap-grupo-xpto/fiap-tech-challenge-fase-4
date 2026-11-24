@@ -136,3 +136,85 @@ def test_navigation_and_anomaly_replay_against_shared_app(integrated_client, mon
         page.sidebar.radio[0].set_value(option).run()
         assert not page.exception, option
         assert not page.error, option
+
+    page.sidebar.radio[0].set_value("Caso multimodal (Fase 4)").run()
+    demo = next(b for b in page.button if b.label == "Executar caso sintético")
+    demo.click().run()
+    assert not page.exception and not page.error
+    assert any(header.value == "Revisão prioritária" for header in page.header)
+
+
+def test_multimodal_demo_uses_the_same_persisted_alerts_on_replay(integrated_client):
+    patient = "DEMO-FUSION"
+    path = "/analyze-rehabilitation-case/demo"
+    first = integrated_client.post(path, params={"patient_id": patient})
+    assert first.status_code == 200
+    report = first.json()
+    assert report["mode"] == "demo"
+    assert report["patient_id"] == patient
+    assert report["review"]["level"] == "prioritized_review"
+    assert report["review"]["sources_with_signals"] == ["text", "audio", "video"]
+    assert report["requires_human_review"]
+    alert_ids = {alert["id"] for alert in report["confirmed_alerts"]}
+    assert len(alert_ids) == 6
+
+    replay = integrated_client.post(path, params={"patient_id": patient}).json()
+    assert {alert["id"] for alert in replay["confirmed_alerts"]} == alert_ids
+    dashboard = integrated_client.get(f"/anomalies/patients/{patient}").json()
+    assert len(dashboard["observations"]) == 51
+    assert {alert["id"] for alert in dashboard["alerts"]} == alert_ids
+    assert integrated_client.post(path, params={"patient_id": "REAL-PATIENT"}).status_code == 422
+
+
+def test_uploaded_case_filters_alerts_by_patient_and_session(integrated_client, monkeypatch):
+    def analyze_video(path, exercise_id, start_frame, end_frame):
+        assert path.read_bytes() == b"example video"
+        assert (exercise_id, start_frame, end_frame) == (6, 2, 12)
+        return {"classification": "incorrect", "deviation_report": {"findings": []}}
+
+    def analyze_audio(path, language):
+        assert path.is_file()
+        assert language == "pt-BR"
+        return {
+            "transcript": "Estou com cansaço.",
+            "risk_flags": ["sintoma"],
+            "acoustic_findings": [],
+        }
+
+    monkeypatch.setattr(main, "analyze_repetition", analyze_video)
+    monkeypatch.setattr(main, "analyze_session_audio", analyze_audio)
+    for patient in ["REHAB-CASE", "OTHER"]:
+        response = integrated_client.post("/anomalies/observations", json={
+            "observations": demo_observations(patient)
+        })
+        assert len(response.json()["new_alerts"]) == 6
+
+    data = {
+        "patient_id": "REHAB-CASE",
+        "start": "2026-01-01T02:05:00+01:00",  # 01:05 UTC, inclusive
+        "end": "2026-01-01T01:05:00Z",
+        "clinical_note": "O paciente relatou dor.",
+        "exercise_id": "6",
+        "start_frame": "2",
+        "end_frame": "12",
+        "language": "pt-BR",
+    }
+    files = {"video": ("case.mp4", b"example video"), "audio": ("case.wav", wav_bytes())}
+    response = integrated_client.post("/analyze-rehabilitation-case", data=data, files=files)
+    assert response.status_code == 200
+    report = response.json()
+    assert report["mode"] == "upload"
+    assert report["signals"]["audio"] == []  # Transcript terms are not vocal evidence.
+    assert report["review"]["sources_with_signals"] == ["text", "video"]
+    assert report["review"]["level"] == "prioritized_review"
+    assert len(report["confirmed_alerts"]) == 5
+    assert {alert["patient_id"] for alert in report["confirmed_alerts"]} == {"REHAB-CASE"}
+
+    data.update(start="2026-01-01T01:10:00Z", end="2026-01-01T01:30:00Z")
+    report = integrated_client.post("/analyze-rehabilitation-case", data=data, files=files).json()
+    assert report["confirmed_alerts"] == []
+    assert report["review"]["level"] == "review"
+    data.update(end="2026-01-01T00:30:00Z")
+    invalid = integrated_client.post("/analyze-rehabilitation-case", data=data, files=files)
+    assert invalid.status_code == 422
+    assert list(main.UPLOAD_DIR.iterdir()) == []

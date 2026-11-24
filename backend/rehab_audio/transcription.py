@@ -10,9 +10,7 @@ _API_URL_TEMPLATE = (
     "speech/recognition/conversation/cognitiveservices/v1"
 )
 _TICKS_PER_SECOND = 10_000_000.0
-# Only WAV (PCM) is accepted: the short-audio REST endpoint rejects MP3, which
-# exists only for the fast/batch transcription API.
-_CONTENT_TYPE = "audio/wav"
+_CONTENT_TYPE = "audio/wav; codecs=audio/pcm; samplerate=16000"
 
 
 class AzureSpeechClient:
@@ -41,6 +39,7 @@ class AzureSpeechClient:
                 "Ocp-Apim-Subscription-Key": self.key,
                 "Ocp-Apim-Subscription-Region": self.region,
                 "Content-Type": _CONTENT_TYPE,
+                "Accept": "application/json",
             },
             data=audio_path.read_bytes(),
             timeout=60,
@@ -52,7 +51,8 @@ class AzureSpeechClient:
             )
 
         payload = response.json()
-        transcript = payload.get("DisplayText") or ""
+        candidates = payload.get("NBest") or [{}]
+        transcript = candidates[0].get("Display") or payload.get("DisplayText") or ""
         segments = self._build_segments(payload, transcript)
         return {
             "transcript": transcript,

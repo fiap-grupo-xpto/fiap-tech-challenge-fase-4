@@ -45,15 +45,13 @@ Para baixar somente as anotacoes pequenas antes dos videos:
 py -3.11 entregas\fase04\download_dataset.py --only Segmentation.csv --only Segmentation.txt --only joints_names.txt --only marker_names.txt
 ```
 
-### Estado neste workspace
+### Dados usados no experimento de vídeo
 
-`Segmentation.csv`, `Segmentation.txt`, `joints_names.txt` e
-`marker_names.txt` estao presentes. Os videos estao extraidos em `Ex1` a `Ex6`:
-130 MP4s, correspondentes a 65 gravacoes nas cameras 17 e 18. O pipeline de
-treinamento usa os 65 videos da Camera17. Os arquivos ZIP nao precisam estar
-presentes para treinar se os videos ja estiverem extraidos. Os ZIPs de
-articulacoes e marcadores nao estao disponiveis localmente; por isso, a
-comparacao com uma referencia de pose nao faz parte do experimento atual.
+O experimento original extraiu 130 MP4s em `Ex1` a `Ex6`, correspondentes a 65
+gravacoes nas cameras 17 e 18. O pipeline usa a Camera17 e os intervalos de
+`Segmentation.csv`. Para reproduzir o treino, extraia o ZIP de videos ao lado do
+CSV, com as pastas `Ex1` a `Ex6` diretamente sob `data/raw/rehab24-6/`.
+A comparacao com uma referencia de pose depende dos arquivos de articulacoes.
 
 ## Citacao
 

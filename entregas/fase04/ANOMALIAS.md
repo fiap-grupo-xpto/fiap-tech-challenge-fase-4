@@ -224,9 +224,10 @@ por falta de credenciais/dependências/artefatos no ambiente.
   sedação, exercício e artefato de sensor de forma autônoma.
 - Mudanças planejadas de prescrição podem gerar falsos alertas; não há conhecimento
   farmacológico nem interpretação de justificativas de prescrição.
-- Medidas importadas precisam de fonte e unidades consistentes. Vídeo/áudio e Azure
-  continuam nos módulos dos outros integrantes; não há fusão automática dos seus
-  resultados com este detector nesta versão.
+- Medidas importadas precisam de fonte e unidades consistentes. A tela
+  **Caso multimodal** cruza os alertas confirmados com achados de nota, áudio e
+  vídeo na janela selecionada. Os critérios do detector continuam baseados nas
+  observações de sinais vitais, atividade e prescrições.
 
 ## Roteiro de demonstração (aproximadamente 3 minutos)
 
@@ -240,3 +241,5 @@ por falta de credenciais/dependências/artefatos no ambiente.
    incluindo a limitação nas alterações sutis.
 6. No vídeo do grupo, conectar esse trecho às demonstrações de áudio/vídeo e Azure;
    o limite de 15 minutos é do vídeo completo, não apenas deste módulo.
+
+Consulte o [roteiro completo de gravação](ROTEIRO_VIDEO.md).

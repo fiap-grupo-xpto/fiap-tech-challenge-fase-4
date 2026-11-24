@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from backend.rehab_audio.acoustics import METRIC_KEYS
+from backend.rehab_audio.terms import extract_critical_terms
 
 
-REPORT_VERSION = "1.0"
+REPORT_VERSION = "1.1"
 
 _WARNING = (
     "Resultado experimental de apoio a reabilitacao; nao e diagnostico e exige "
@@ -21,6 +22,18 @@ def _num(value) -> float:
         return float(value)
     except (TypeError, ValueError):
         return 0.0
+
+
+def _azure_critical_terms(text_analysis: dict, terms: list[dict]) -> list[dict]:
+    critical = {item["term"] for item in terms if item["severity"] == "warning"}
+    excerpts = [("frase-chave", phrase) for phrase in (text_analysis.get("key_phrases") or [])]
+    excerpts += [("entidade", entity["text"]) for entity in (text_analysis.get("entities") or [])]
+    return [
+        {"term": match["term"], "source": source, "excerpt": excerpt}
+        for source, excerpt in dict.fromkeys(excerpts)
+        for match in extract_critical_terms(excerpt)
+        if match["term"] in critical
+    ]
 
 
 def build_support_report(
@@ -81,6 +94,7 @@ def build_support_report(
             }
             for entity in (text_analysis.get("entities") or [])
         ],
+        "azure_critical_terms": _azure_critical_terms(text_analysis, terms),
         "acoustic_findings": [
             {
                 "code": finding.get("code", ""),

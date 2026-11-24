@@ -214,7 +214,7 @@ def train_and_evaluate(
         {
             "model": model,
             "feature_version": FEATURE_VERSION,
-            "supported_exercises": list(range(1, 7)),
+            "supported_exercises": sorted(set(exercises[train_indices].tolist())),
             "sample_frames": sample_frames,
         },
         model_path,

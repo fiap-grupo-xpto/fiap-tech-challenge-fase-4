@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import BackgroundTasks, FastAPI, UploadFile, File, Form, HTTPException, Query
 from fastapi.responses import FileResponse
+from pydantic import AwareDatetime
 from starlette.background import BackgroundTask
 from starlette.concurrency import run_in_threadpool
 from typing import List
@@ -19,8 +20,12 @@ from backend.assistant.llm_adapter import AssistantProviderSelector
 import logging
 from backend.rehab_video.service import analyze_repetition, annotate_repetition_video
 from backend.rehab_audio.service import analyze_session_audio
+from backend.rehab_case import build_case_report, demo_media_reports
 from backend.anomalies.api import router as anomalies_router
-from backend.anomalies.notifier import notification_worker
+from backend.anomalies.demo import demo_observations
+from backend.anomalies.notifier import deliver, notification_worker
+from backend.anomalies.schemas import ObservationBatch
+from backend.anomalies.service import Conflict, ingest
 import os
 
 logger = logging.getLogger(__name__)
@@ -544,6 +549,51 @@ async def annotate_rehabilitation_video(
         media_type="video/mp4",
         filename="analise_reabilitacao_anotado.mp4",
         background=BackgroundTask(_remove_files, output_path),
+    )
+
+
+@app.post("/analyze-rehabilitation-case", tags=["Fase 4 - Caso multimodal"])
+async def analyze_rehabilitation_case(
+    patient_id: str = Form(min_length=1, max_length=80, pattern=r"^[\w.-]+$"),
+    start: AwareDatetime = Form(),
+    end: AwareDatetime = Form(),
+    clinical_note: str = Form(min_length=1, max_length=4000),
+    audio: UploadFile = File(),
+    video: UploadFile = File(),
+    exercise_id: int = Form(),
+    start_frame: int = Form(0),
+    end_frame: int | None = Form(None),
+    language: str = Form(""),
+):
+    if end < start:
+        raise HTTPException(status_code=422, detail="O fim da sessão deve ser igual ou posterior ao início.")
+    clinical_note = clinical_note.strip()
+    if not clinical_note:
+        raise HTTPException(status_code=422, detail="Informe a nota da sessão.")
+    _validate_rehab_request(video, exercise_id, start_frame, end_frame)
+    _validate_rehab_audio_request(audio)
+    video_report = await analyze_rehabilitation_video(video, exercise_id, start_frame, end_frame)
+    audio_report = await analyze_rehabilitation_audio(audio, language)
+    return await run_in_threadpool(
+        build_case_report, patient_id, start, end, clinical_note, audio_report, video_report, "upload"
+    )
+
+
+@app.post("/analyze-rehabilitation-case/demo", tags=["Fase 4 - Caso multimodal"])
+def analyze_rehabilitation_case_demo(
+    background: BackgroundTasks,
+    patient_id: str = Query(min_length=6, max_length=80, pattern=r"^DEMO-[\w.-]+$"),
+):
+    observations = ObservationBatch(observations=demo_observations(patient_id)).observations
+    try:
+        result = ingest(observations)
+    except Conflict as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+    if result["new_alerts"]:
+        background.add_task(deliver, result["new_alerts"])
+    note, audio, video = demo_media_reports()
+    return build_case_report(
+        patient_id, observations[0].timestamp, observations[-1].timestamp, note, audio, video, "demo"
     )
 
 

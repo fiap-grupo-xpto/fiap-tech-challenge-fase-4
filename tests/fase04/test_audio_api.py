@@ -1,6 +1,11 @@
+import io
+
+import pytest
+import soundfile as sf
 from fastapi.testclient import TestClient
 
 import backend.main as backend_main
+from backend.rehab_audio import service as audio_service
 
 
 def _stub_report(*_args, **_kwargs) -> dict:
@@ -82,4 +87,27 @@ def test_rehabilitation_audio_endpoint_rejects_oversized_upload(monkeypatch, tmp
         )
 
     assert response.status_code == 413
+    assert list(tmp_path.iterdir()) == []
+
+
+@pytest.mark.parametrize("format,subtype", [("WAV", "FLOAT"), ("FLAC", "PCM_16")])
+def test_rehabilitation_audio_rejects_incompatible_wav_before_azure(
+    monkeypatch, tmp_path, format, subtype
+):
+    audio = io.BytesIO()
+    sf.write(audio, [0.0] * 16, 16000, format=format, subtype=subtype)
+    monkeypatch.setattr(backend_main, "UPLOAD_DIR", tmp_path)
+
+    def unexpected_call():
+        pytest.fail("The unsupported audio must be rejected before contacting Azure.")
+
+    monkeypatch.setattr(audio_service, "_get_stt_client", unexpected_call)
+    with TestClient(backend_main.app) as client:
+        response = client.post(
+            "/analyze-rehabilitation-audio",
+            files={"audio": ("sample.wav", audio.getvalue(), "audio/wav")},
+        )
+
+    assert response.status_code == 422
+    assert "16 bits" in response.json()["detail"]
     assert list(tmp_path.iterdir()) == []

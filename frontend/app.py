@@ -10,9 +10,18 @@ import requests
 import streamlit as st
 
 
-st.set_page_config(layout="wide", page_title="Tech Challenge Fase 03 - FIAP Grupo 69", page_icon="🩺")
+st.set_page_config(layout="wide", page_title="Tech Challenge Fase 4 - FIAP Grupo 69", page_icon="🩺")
 API_URL = os.getenv("API_URL", "http://localhost:8888")
 ASSISTANT_API_TIMEOUT_SECONDS = int(os.getenv("ASSISTANT_API_TIMEOUT_SECONDS", "240"))
+
+REHAB_EXERCISES = {
+    1: "Abdução de braço",
+    2: "Transição dos braços em V/W",
+    3: "Flexão apoiada em mesa",
+    4: "Abdução de perna",
+    5: "Afundo",
+    6: "Agachamento",
+}
 
 EXPECTED_COLUMNS = [
     "GENDER",
@@ -52,7 +61,7 @@ except FileNotFoundError:
 
 
 if "stage" not in st.session_state:
-    st.session_state.stage = 3  # Default to Phase 3 Assistant
+    st.session_state.stage = 7
 if "image_key" not in st.session_state:
     st.session_state.image_key = 0
 if "csv_page_index" not in st.session_state:
@@ -119,6 +128,7 @@ def render_audio_analysis(result: dict) -> None:
 
     azure_key_phrases = result.get("azure_key_phrases") or []
     azure_entities = result.get("azure_entities") or []
+    azure_critical_terms = result.get("azure_critical_terms") or []
     if azure_key_phrases or azure_entities:
         st.subheader("Termos e entidades (Azure Text Analytics)")
         if azure_key_phrases:
@@ -128,6 +138,9 @@ def render_audio_analysis(result: dict) -> None:
                 pd.DataFrame(azure_entities, columns=["text", "category"]),
                 use_container_width=True,
             )
+        if azure_critical_terms:
+            st.caption("Termos críticos encontrados nos trechos destacados pelo Azure")
+            st.dataframe(azure_critical_terms, hide_index=True)
 
     st.subheader("Indicadores vocais")
     acoustic_findings = result["acoustic_findings"]
@@ -178,6 +191,7 @@ st.sidebar.title("Navegação do Projeto")
 st.sidebar.caption("FIAP Tech Challenge - Grupo 69")
 
 stage_map = {
+    "Caso multimodal (Fase 4)": 7,
     "🔔 Detecção de anomalias (Fase 4)": 6,
     "🎧 Análise de áudio (Fase 4)": 5,
     "🎥 Análise de movimento (Fase 4)": 4,
@@ -211,7 +225,12 @@ st.sidebar.caption(f"API Conectada: `{API_URL}`")
 # =========================================================================
 # ETAPA 3: ASSISTENTE VIRTUAL MÉDICO (FASE 3)
 # =========================================================================
-if st.session_state.stage == 6:
+if st.session_state.stage == 7:
+    from multimodal_panel import render_multimodal
+
+    render_multimodal(API_URL, REHAB_EXERCISES)
+
+elif st.session_state.stage == 6:
     from anomalies_panel import render_anomalies
 
     render_anomalies(API_URL)
@@ -696,18 +715,10 @@ elif st.session_state.stage == 4:
         "identifica o tipo específico de erro."
     )
 
-    exercise_names = {
-        1: "Abdução de braço",
-        2: "Transição dos braços em V/W",
-        3: "Flexão apoiada em mesa",
-        4: "Abdução de perna",
-        5: "Afundo",
-        6: "Agachamento",
-    }
     exercise_id = st.selectbox(
         "Exercício",
-        list(exercise_names),
-        format_func=lambda value: f"{value} — {exercise_names[value]}",
+        list(REHAB_EXERCISES),
+        format_func=lambda value: f"{value} — {REHAB_EXERCISES[value]}",
     )
     uploaded_video = st.file_uploader(
         "Vídeo da repetição (MP4, até 200 MB)",
@@ -859,7 +870,7 @@ elif st.session_state.stage == 5:
         "Envie o áudio de uma sessão de reabilitação para transcrever a interação entre "
         "fisioterapeuta e paciente, extrair termos críticos e sentimento e sinalizar "
         "indicadores vocais de fadiga, desconforto ou dificuldade respiratória. "
-        "Formatos suportados: `.wav` (PCM 16 kHz mono), até 25 MB e 60 segundos."
+        "Formato aceito: `.wav` (PCM de 16 bits, 16 kHz, mono), até 25 MB e 60 segundos."
     )
 
     uploaded_audio = st.file_uploader(

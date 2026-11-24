@@ -32,7 +32,11 @@ def test_integrated_panel_replay_acknowledge_and_retry(monkeypatch, tmp_path):
         next(b for b in page.button if b.label == "Reproduzir demonstração sintética").click().run()
         assert not page.exception
         assert not page.error
-        assert len(dashboard("UI-DEMO")["alerts"]) == 6
+        alerts = dashboard("UI-DEMO")["alerts"]
+        assert len(alerts) == 6
+        assert {f"ID do alerta: {alert['id']}" for alert in alerts} <= {
+            caption.value for caption in page.caption
+        }
         next(b for b in page.button if b.label == "Marcar como visto").click().run()
         assert not page.exception
         assert sum(a["acknowledged_at"] is not None for a in dashboard("UI-DEMO")["alerts"]) == 1
