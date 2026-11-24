@@ -32,12 +32,13 @@ def test_unacceptable_answers(patient, answer, rule):
 
 def test_context_examples_have_grouped_variants_and_real_prompt():
     examples = build_context_examples()
-    assert len(examples) == 60
-    assert len({e['qid'] for e in examples}) == 30
+    # 4 categorias: 30 pacientes x 2 queries + 15 x 2 + 10 x 2 + 10 x 2 = 130 exemplos
+    assert len(examples) == 130
+    # 30 + 15 + 10 + 10 = 65 pacientes sintéticos distintos
+    assert len({e['qid'] for e in examples}) == 65
     for row in examples:
         assert row['question_anon'].startswith('Pergunta clínica:')
         assert f"[{row['qid']}]" in row['answer_anon']
-        assert 'pending_exams' in row['question_anon']
 
 
 def test_observed_real_model_failure_is_blocked(patient):

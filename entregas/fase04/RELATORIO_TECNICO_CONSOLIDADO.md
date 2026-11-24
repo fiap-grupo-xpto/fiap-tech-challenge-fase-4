@@ -4,6 +4,12 @@
 **FIAP - Inteligencia Artificial para Desenvolvedores**  
 **Grupo 69**
 
+Repositório do Github:
+https://github.com/fiap-grupo-xpto/fiap-tech-challenge-fase-4
+
+
+[Vídeo da apresentação no YouTube](https://youtu.be/bgRv314A1F8) · 14:59 · não listado.
+
 > O classificador e um prototipo experimental para pesquisa/ensino, nao uma
 > ferramenta clinica. Resultados devem ser interpretados dentro das limitacoes
 > do dataset e da separacao por participantes descritas abaixo.
